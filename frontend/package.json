@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:unit": "vitest run"
   },
   "dependencies": {
     "react": "^19.2.6",

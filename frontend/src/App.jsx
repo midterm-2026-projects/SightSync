@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 // FIX: Import the two actual component files that exist in your folder
 import ReceiptForm from "./components/ReceiptForm";
 import ReceiptLayout from "./components/ReceiptLayout";
