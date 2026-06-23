@@ -1,8 +1,7 @@
-
-import InventoryPage from "./components/InventoryPage";
+import InventoryManagementInterface from "./components/InventoryManagementInterface";
 
 function App() {
-  return <InventoryPage />;
+  return <InventoryManagementInterface />;
 }
 
 export default App;
