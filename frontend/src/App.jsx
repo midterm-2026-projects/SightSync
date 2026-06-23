@@ -1,57 +1,31 @@
-import  { useState } from "react";
-// FIX: Import the two actual component files that exist in your folder
-import ReceiptForm from "./components/ReceiptForm";
-import ReceiptLayout from "./components/ReceiptLayout";
 
-function App() {
-  // Your state hooks matching your tests should be here
-  const [patientName, setPatientName] = useState("John Doe");
-  const [doctorName, setDoctorName] = useState("Dr. Sarah Jenkins, OD");
-  const [date, setDate] = useState("2026-06-23");
-  const [receiptNumber, setReceiptNumber] = useState("EYE-20260623-NU13");
-  const [odRx, setOdRx] = useState("Sph -2.50 / Cyl -0.50 x 180");
-  const [osRx, setOsRx] = useState("Sph -2.25 / DS");
-  const [items, setItems] = useState([
-    { name: 'Anti-Reflective Lenses (1.61)', quantity: 1, price: 120.00 },
-    { name: 'Designer Frame - Matte Black', quantity: 1, price: 145.00 }
-  ]);
+import AppLayout from './components/AppLayout';
 
-  const handleItemChange = (index, field, value) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = field === 'name' ? value : Number(value);
-    setItems(updatedItems);
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
+export default function App() {
   return (
-    <div className="app-container" style={{ display: 'flex', gap: '20px', padding: '20px' }}>
-      {/* Left side: The data input form panel */}
-      <ReceiptForm 
-        patientName={patientName} setPatientName={setPatientName}
-        doctorName={doctorName} setDoctorName={setDoctorName}
-        date={date} setDate={setDate}
-        receiptNumber={receiptNumber} setReceiptNumber={setReceiptNumber}
-        odRx={odRx} setOdRx={setOdRx}
-        osRx={osRx} setOsRx={setOsRx}
-        items={items} handleItemChange={handleItemChange}
-        handlePrint={handlePrint}
-      />
-
-      {/* Right side: The printable receipt preview sheet */}
-      <ReceiptLayout 
-        patientName={patientName}
-        doctorName={doctorName}
-        date={date}
-        receiptNumber={receiptNumber}
-        odRx={odRx}
-        osRx={osRx}
-        items={items}
-      />
-    </div>
+    <AppLayout>
+      {(activeTab) => (
+        <div>
+          {activeTab === 'dashboard' && (
+            <div>
+              <h2>Dashboard View</h2>
+              <p>System initialized successfully. Core functional architecture is set.</p>
+            </div>
+          )}
+          {activeTab === 'patients' && (
+            <div>
+              <h2>Patient Placeholder</h2>
+              <p>Patient sub-modules will mount within this child hook layer next week.</p>
+            </div>
+          )}
+          {activeTab === 'appointments' && (
+            <div>
+              <h2>Appointments Placeholder</h2>
+              <p>Appointment elements will be bound here during Week 4.</p>
+            </div>
+          )}
+        </div>
+      )}
+    </AppLayout>
   );
 }
-
-export default App;
