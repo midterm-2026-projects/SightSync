@@ -11,6 +11,7 @@ import ReceiptLayout from "./components/ReceiptLayout";
 // Module C: Inventory Management
 import InventoryForm from "./components/InventoryForm";
 import InventoryTable from "./components/InventoryTable";
+import inventoryData from "./data/inventoryData";
 
 // Module D: Layout / Patient Registration
 import AppLayout from "./components/AppLayout";
@@ -50,11 +51,7 @@ const INITIAL_INVENTORY = [
   },
 ];
 
-export default function App() {
-  // Global View Navigation State
-  // "receipts" | "communications" | "dashboard" | "inventory" | "registration"
-  const [activeTab, setActiveTab] = useState("receipts");
-
+function App() {
   // --- STATE: Communication ---
   const [logs, setLogs] = useState(INITIAL_LOGS);
   const [newLogId, setNewLogId] = useState(null);
@@ -105,164 +102,131 @@ export default function App() {
     window.print();
   };
 
-  const TABS = [
-    { key: "receipts", label: "📄 Receipt Engine" },
-    { key: "communications", label: "💬 Communications Panel" },
-    { key: "dashboard", label: "🏠 Dashboard" },
-    { key: "inventory", label: "📦 Inventory" },
-    { key: "registration", label: "🧾 Patient Registration" },
-  ];
-
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, sans-serif",
-        minHeight: "100vh",
-        background: "#f8fafc",
-      }}
-    >
-      {/* Navigation Header (hidden during printing) */}
-      <header
-        className="no-print"
-        style={{
-          background: "#fff",
-          borderBottom: "1px solid #e2e8f0",
-          padding: "12px 24px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1400px",
-            margin: "0 auto",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "12px",
-          }}
-        >
-          <span style={{ fontWeight: 800, fontSize: "18px", color: "#0f766e" }}>
-            SightSync Clinic Suite
-          </span>
-          <nav style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-            {TABS.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  fontWeight: 600,
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  background: activeTab === tab.key ? "#0f766e" : "transparent",
-                  color: activeTab === tab.key ? "#fff" : "#64748b",
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-      </header>
+    <AppLayout>
+      {(activeTab) => (
+        <div style={{ padding: "20px" }}>
+          {/* VIEW: Dashboard + Inventory */}
+          {activeTab === "dashboard" && (
+            <>
+              <h2>Dashboard View</h2>
+              <p>
+                System initialized successfully. Core functional architecture
+                is set.
+              </p>
 
-      {/* Primary Workspace Container */}
-      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "24px" }}>
-        {/* VIEW: Receipt Creation Suite */}
-        {activeTab === "receipts" && (
-          <div
-            className="app-container"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "32px",
-              alignItems: "start",
-            }}
-          >
-            <ReceiptForm
-              patientName={patientName}
-              setPatientName={setPatientName}
-              doctorName={doctorName}
-              setDoctorName={setDoctorName}
-              date={date}
-              setDate={setDate}
-              receiptNumber={receiptNumber}
-              setReceiptNumber={setReceiptNumber}
-              odRx={odRx}
-              setOdRx={setOdRx}
-              osRx={osRx}
-              setOsRx={setOsRx}
-              items={items}
-              handleItemChange={handleItemChange}
-              handlePrint={handlePrint}
-            />
-            <ReceiptLayout
-              patientName={patientName}
-              doctorName={doctorName}
-              date={date}
-              receiptNumber={receiptNumber}
-              odRx={odRx}
-              osRx={osRx}
-              items={items}
-            />
-          </div>
-        )}
+              <hr />
 
-        {/* VIEW: Stakeholder Communication Board */}
-        {activeTab === "communications" && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1.5fr",
-              gap: "32px",
-              alignItems: "start",
-            }}
-          >
-            <div>
-              <Compose currentUser={MOCK_USER} onSend={handleSendMessage} />
-            </div>
-            <div>
-              <h2
-                style={{
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  marginTop: 0,
-                  marginBottom: 16,
-                  color: C?.text || "#1e293b",
-                }}
-              >
-                Sent Updates Feed
-              </h2>
-              <CommunicationLogs
-                currentUser={MOCK_USER}
-                logs={logs}
-                newId={newLogId}
+              <h1>Inventory Management</h1>
+              <InventoryForm inventory={inventory} setInventory={setInventory} />
+              <InventoryTable inventory={inventory} />
+
+              <hr />
+
+              <h1>Inventory Monitoring</h1>
+              <InventoryTable inventory={inventoryData} />
+            </>
+          )}
+
+          {/* VIEW: Receipt Creation Suite */}
+          {activeTab === "receipts" && (
+            <div
+              className="app-container"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "32px",
+                alignItems: "start",
+              }}
+            >
+              <ReceiptForm
+                patientName={patientName}
+                setPatientName={setPatientName}
+                doctorName={doctorName}
+                setDoctorName={setDoctorName}
+                date={date}
+                setDate={setDate}
+                receiptNumber={receiptNumber}
+                setReceiptNumber={setReceiptNumber}
+                odRx={odRx}
+                setOdRx={setOdRx}
+                osRx={osRx}
+                setOsRx={setOsRx}
+                items={items}
+                handleItemChange={handleItemChange}
+                handlePrint={handlePrint}
+              />
+              <ReceiptLayout
+                patientName={patientName}
+                doctorName={doctorName}
+                date={date}
+                receiptNumber={receiptNumber}
+                odRx={odRx}
+                osRx={osRx}
+                items={items}
               />
             </div>
-          </div>
-        )}
+          )}
 
-        {/* VIEW: Dashboard */}
-        {activeTab === "dashboard" && (
-          <div>
-            <h2>Dashboard View</h2>
-            <p>System initialized successfully. Core functional architecture is set.</p>
-          </div>
-        )}
+          {/* VIEW: Stakeholder Communication Board */}
+          {activeTab === "communications" && (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1.5fr",
+                gap: "32px",
+                alignItems: "start",
+              }}
+            >
+              <div>
+                <Compose currentUser={MOCK_USER} onSend={handleSendMessage} />
+              </div>
+              <div>
+                <h2
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    marginTop: 0,
+                    marginBottom: 16,
+                    color: C?.text || "#1e293b",
+                  }}
+                >
+                  Sent Updates Feed
+                </h2>
+                <CommunicationLogs
+                  currentUser={MOCK_USER}
+                  logs={logs}
+                  newId={newLogId}
+                />
+              </div>
+            </div>
+          )}
 
-        {/* VIEW: Inventory Management */}
-        {activeTab === "inventory" && (
-          <div>
-            <h1>Inventory Management</h1>
-            <InventoryForm inventory={inventory} setInventory={setInventory} />
-            <InventoryTable inventory={inventory} />
-          </div>
-        )}
+          {/* VIEW: Patients (placeholder) */}
+          {activeTab === "patients" && (
+            <div>
+              <h2>Patient Placeholder</h2>
+              <p>
+                Patient sub-modules will mount within this child hook layer
+                next week.
+              </p>
+            </div>
+          )}
 
-        {/* VIEW: Patient Registration */}
-        {activeTab === "registration" && <PatientRegistrationForm />}
-      </main>
-    </div>
+          {/* VIEW: Appointments (placeholder) */}
+          {activeTab === "appointments" && (
+            <div>
+              <h2>Appointments Placeholder</h2>
+              <p>Appointment elements will be bound here during Week 4.</p>
+            </div>
+          )}
+
+          {/* VIEW: Patient Registration */}
+          {activeTab === "registration" && <PatientRegistrationForm />}
+        </div>
+      )}
+    </AppLayout>
   );
 }
+
+export default App;
