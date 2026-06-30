@@ -2,7 +2,8 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import '@testing-library/jest-dom'
-import Receiptlayout from '../components/Receiptlayout'
+// FIX: Imported name now perfectly matches the uppercase "L" used below
+import ReceiptLayout from '../components/ReceiptLayout'
 
 describe('ReceiptLayout Component - Layout Columns & Formats', () => {
 

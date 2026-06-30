@@ -1,6 +1,7 @@
 import React from "react";
 import { C } from "./receiptConstants";
 
+// Named export (satisfies Compose.jsx re-exporting)
 export function AccessDeniedBanner() {
   return (
     <div
@@ -28,3 +29,6 @@ export function AccessDeniedBanner() {
     </div>
   );
 }
+
+// Default export (satisfies AccessDeniedBanner.test.jsx default import)
+export default AccessDeniedBanner;
