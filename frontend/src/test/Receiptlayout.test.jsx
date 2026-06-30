@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import '@testing-library/jest-dom'
-import ReceiptLayout from '../components/Receiptlayout'
+import ReceiptLayout from '../components/ReceiptLayout'
 
 describe('ReceiptLayout Component - Layout Columns & Formats', () => {
 
