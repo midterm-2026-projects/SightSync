@@ -1,123 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1782800667065" clover="3.2.0">
-  <project timestamp="1782800667065" name="All files">
-    <metrics statements="93" coveredstatements="83" conditionals="91" coveredconditionals="73" methods="18" coveredmethods="17" elements="202" coveredelements="173" complexity="0" loc="93" ncloc="93" packages="3" files="5" classes="5"/>
-    <package name="components">
-      <metrics statements="27" coveredstatements="26" conditionals="36" coveredconditionals="32" methods="9" coveredmethods="8"/>
-      <file name="AppLayout.jsx" path="C:\Users\John Patrick Lalo\OneDrive\Desktop\after thesis shits here\frontend sightsync obj1\frontend\src\components\AppLayout.jsx">
-        <metrics statements="6" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="4"/>
-        <line num="5" count="9" type="stmt"/>
-        <line num="7" count="9" type="stmt"/>
-        <line num="20" count="1" type="stmt"/>
-        <line num="25" count="2" type="stmt"/>
-        <line num="30" count="0" type="stmt"/>
-        <line num="35" count="2" type="stmt"/>
-      </file>
-      <file name="PatientRegistrationForm.jsx" path="C:\Users\John Patrick Lalo\OneDrive\Desktop\after thesis shits here\frontend sightsync obj1\frontend\src\components\PatientRegistrationForm.jsx">
-        <metrics statements="21" coveredstatements="21" conditionals="36" coveredconditionals="32" methods="4" coveredmethods="4"/>
-        <line num="11" count="86" type="stmt"/>
-        <line num="14" count="86" type="stmt"/>
-        <line num="15" count="86" type="stmt"/>
-        <line num="17" count="86" type="stmt"/>
-        <line num="18" count="3" type="stmt"/>
-        <line num="20" count="3" type="stmt"/>
-        <line num="22" count="3" type="stmt"/>
-        <line num="24" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="25" count="2" type="stmt"/>
-        <line num="26" count="2" type="stmt"/>
-        <line num="29" count="1" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
-        <line num="33" count="1" type="stmt"/>
-        <line num="34" count="1" type="stmt"/>
-        <line num="37" count="1" type="stmt"/>
-        <line num="39" count="1" type="stmt"/>
-        <line num="42" count="86" type="stmt"/>
-        <line num="225" count="1" type="stmt"/>
-        <line num="416" count="1" type="stmt"/>
-        <line num="417" count="1" type="stmt"/>
-        <line num="418" count="1" type="stmt"/>
-      </file>
-    </package>
-    <package name="hooks">
-      <metrics statements="26" coveredstatements="24" conditionals="13" coveredconditionals="8" methods="7" coveredmethods="7"/>
-      <file name="usePatientForm.js" path="C:\Users\John Patrick Lalo\OneDrive\Desktop\after thesis shits here\frontend sightsync obj1\frontend\src\hooks\usePatientForm.js">
-        <metrics statements="26" coveredstatements="24" conditionals="13" coveredconditionals="8" methods="7" coveredmethods="7"/>
-        <line num="3" count="1" type="stmt"/>
-        <line num="18" count="86" type="stmt"/>
-        <line num="20" count="86" type="stmt"/>
-        <line num="21" count="76" type="stmt"/>
-        <line num="23" count="76" type="stmt"/>
-        <line num="24" count="76" type="stmt"/>
-        <line num="30" count="76" type="cond" truecount="2" falsecount="0"/>
-        <line num="31" count="2" type="stmt"/>
-        <line num="34" count="76" type="stmt"/>
-        <line num="38" count="86" type="stmt"/>
-        <line num="39" count="1" type="stmt"/>
-        <line num="40" count="1" type="stmt"/>
-        <line num="45" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="46" count="0" type="stmt"/>
-        <line num="49" count="1" type="stmt"/>
-        <line num="53" count="86" type="stmt"/>
-        <line num="54" count="2" type="stmt"/>
-        <line num="57" count="86" type="stmt"/>
-        <line num="67" count="2" type="cond" truecount="1" falsecount="1"/>
-        <line num="69" count="2" type="stmt"/>
-        <line num="70" count="2" type="stmt"/>
-        <line num="72" count="2" type="stmt"/>
-        <line num="74" count="2" type="stmt"/>
-        <line num="76" count="2" type="cond" truecount="1" falsecount="1"/>
-        <line num="80" count="0" type="stmt"/>
-        <line num="83" count="2" type="cond" truecount="1" falsecount="1"/>
-      </file>
-    </package>
-    <package name="utils">
-      <metrics statements="40" coveredstatements="33" conditionals="42" coveredconditionals="33" methods="2" coveredmethods="2"/>
-      <file name="patientMapper.js" path="C:\Users\John Patrick Lalo\OneDrive\Desktop\after thesis shits here\frontend sightsync obj1\frontend\src\utils\patientMapper.js">
-        <metrics statements="1" coveredstatements="1" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
-        <line num="9" count="1" type="stmt"/>
-      </file>
-      <file name="patientValidation.js" path="C:\Users\John Patrick Lalo\OneDrive\Desktop\after thesis shits here\frontend sightsync obj1\frontend\src\utils\patientValidation.js">
-        <metrics statements="39" coveredstatements="32" conditionals="40" coveredconditionals="32" methods="1" coveredmethods="1"/>
-        <line num="12" count="3" type="stmt"/>
-        <line num="18" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="19" count="1" type="stmt"/>
-        <line num="22" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="23" count="2" type="stmt"/>
-        <line num="26" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="27" count="2" type="stmt"/>
-        <line num="30" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="31" count="2" type="stmt"/>
-        <line num="34" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="35" count="2" type="stmt"/>
-        <line num="38" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="39" count="2" type="stmt"/>
-        <line num="46" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="48" count="1" type="stmt"/>
-        <line num="50" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="51" count="0" type="stmt"/>
-        <line num="59" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="60" count="1" type="stmt"/>
-        <line num="62" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="63" count="0" type="stmt"/>
-        <line num="67" count="1" type="stmt"/>
-        <line num="69" count="1" type="cond" truecount="3" falsecount="1"/>
-        <line num="70" count="0" type="stmt"/>
-        <line num="79" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="80" count="1" type="stmt"/>
-        <line num="81" count="1" type="stmt"/>
-        <line num="83" count="1" type="stmt"/>
-        <line num="84" count="1" type="stmt"/>
-        <line num="86" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="87" count="0" type="stmt"/>
-        <line num="96" count="3" type="stmt"/>
-        <line num="98" count="3" type="cond" truecount="1" falsecount="1"/>
-        <line num="102" count="0" type="stmt"/>
-        <line num="106" count="3" type="cond" truecount="1" falsecount="1"/>
-        <line num="110" count="0" type="stmt"/>
-        <line num="114" count="3" type="cond" truecount="1" falsecount="1"/>
-        <line num="118" count="0" type="stmt"/>
-        <line num="126" count="3" type="stmt"/>
-      </file>
-    </package>
+<coverage generated="1782202158420" clover="3.2.0">
+  <project timestamp="1782202158420" name="All files">
+    <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4" elements="9" coveredelements="9" complexity="0" loc="5" ncloc="5" packages="1" files="1" classes="1"/>
+    <file name="AppLayout.jsx" path="C:\Users\John Patrick Lalo\OneDrive\Desktop\after thesis shits here\frontend sightsync obj1\frontend\src\components\AppLayout.jsx">
+      <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+      <line num="5" count="9" type="stmt"/>
+      <line num="7" count="9" type="stmt"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="25" count="2" type="stmt"/>
+      <line num="30" count="2" type="stmt"/>
+    </file>
   </project>
 </coverage>
