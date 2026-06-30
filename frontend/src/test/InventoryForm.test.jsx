@@ -9,6 +9,9 @@ describe("InventoryForm Validation", () => {
   it("should not submit when only Product Name is provided", async () => {
     // Arrange
     const mockSetInventory = vi.fn();
+    const alertSpy = vi
+    .spyOn(window, "alert")
+    .mockImplementation(() => {});
     const user = userEvent.setup();
 
     render(
@@ -31,13 +34,23 @@ describe("InventoryForm Validation", () => {
     );
 
     // Assert
+    expect(alertSpy)
+    .toHaveBeenCalledWith(
+    "Please complete all fields."
+    );
+
     expect(mockSetInventory)
-      .not.toHaveBeenCalled();
+    .not.toHaveBeenCalled();
+
+    alertSpy.mockRestore();
   });
 
   it("should not submit when Product Name and Price are provided but Stock is empty", async () => {
     // Arrange
     const mockSetInventory = vi.fn();
+    const alertSpy = vi
+    .spyOn(window, "alert")
+    .mockImplementation(() => {});
     const user = userEvent.setup();
 
     render(
@@ -65,13 +78,23 @@ describe("InventoryForm Validation", () => {
     );
 
     // Assert
+    expect(alertSpy)
+    .toHaveBeenCalledWith(
+    "Please complete all fields."
+    );
+
     expect(mockSetInventory)
-      .not.toHaveBeenCalled();
+    .not.toHaveBeenCalled();
+
+    alertSpy.mockRestore();
   });
 
   it("should not submit when Product Name and Stock are provided but Price is empty", async () => {
     // Arrange
     const mockSetInventory = vi.fn();
+    const alertSpy = vi
+    .spyOn(window, "alert")
+    .mockImplementation(() => {});
     const user = userEvent.setup();
 
     render(
@@ -99,8 +122,15 @@ describe("InventoryForm Validation", () => {
     );
 
     // Assert
+    expect(alertSpy)
+    .toHaveBeenCalledWith(
+    "Please complete all fields."
+    );
+
     expect(mockSetInventory)
-      .not.toHaveBeenCalled();
+    .not.toHaveBeenCalled();
+
+    alertSpy.mockRestore();
   });
 
   it("should submit when all required fields are completed", async () => {
@@ -138,8 +168,15 @@ describe("InventoryForm Validation", () => {
     );
 
     // Assert
-    expect(mockSetInventory)
-      .toHaveBeenCalledTimes(1);
+    expect(mockSetInventory).toHaveBeenCalledWith([
+     expect.objectContaining({
+        name: "Blue Cut Lens",
+        type: "Lens",
+        price: 1500,
+        stock: 20,
+       }),
+    ]);
+    
   });
 
   it("should allow user to select Frame from dropdown", async () => {
