@@ -31,6 +31,10 @@ describe("InventoryTable", () => {
       description: "should display inventory item stock",
       value: "20",
     },
+    {
+      description: "should display Available status",
+      value: "Available",
+    },
   ];
 
   testCases.forEach(({ description, value }) => {
@@ -50,4 +54,30 @@ describe("InventoryTable", () => {
       ).toBeInTheDocument();
     });
   });
+
+  it("should display Out of Stock status when stock is zero", () => {
+    // Arrange
+    const inventory = [
+      {
+        id: 1,
+        name: "Metal Frame",
+        type: "Frame",
+        price: 2500,
+        stock: 0,
+      },
+    ];
+
+    // Act
+    render(
+      <InventoryTable
+        inventory={inventory}
+      />
+    );
+
+    // Assert
+    expect(
+      screen.getByText("Out of Stock")
+    ).toBeInTheDocument();
+  });
+
 });

@@ -1,8 +1,8 @@
 
 
-// export const formatCurrency = (amount) => {
-//   return `$${amount.toFixed(2)}`;
-// };
+export const formatCurrency = (amount) => {
+  return `$${amount.toFixed(2)}`;
+};
 import { formatCurrency } from "./receiptContants";
 
 export default function ReceiptDetails({
