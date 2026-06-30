@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <coverage generated="1782788770114" clover="3.2.0">
   <project timestamp="1782788770115" name="All files">
     <metrics statements="22" coveredstatements="22" conditionals="5" coveredconditionals="5" methods="8" coveredmethods="8" elements="35" coveredelements="35" complexity="0" loc="22" ncloc="22" packages="1" files="2" classes="2"/>
@@ -29,6 +30,18 @@
       <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
       <line num="2" count="4" type="stmt"/>
       <line num="20" count="4" type="stmt"/>
+=======
+<coverage generated="1782202158420" clover="3.2.0">
+  <project timestamp="1782202158420" name="All files">
+    <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4" elements="9" coveredelements="9" complexity="0" loc="5" ncloc="5" packages="1" files="1" classes="1"/>
+    <file name="AppLayout.jsx" path="C:\Users\John Patrick Lalo\OneDrive\Desktop\after thesis shits here\frontend sightsync obj1\frontend\src\components\AppLayout.jsx">
+      <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+      <line num="5" count="9" type="stmt"/>
+      <line num="7" count="9" type="stmt"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="25" count="2" type="stmt"/>
+      <line num="30" count="2" type="stmt"/>
+>>>>>>> a1757ba52caf8de206af44a0333c68366f2da422
     </file>
   </project>
 </coverage>
