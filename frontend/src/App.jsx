@@ -1,8 +1,10 @@
 import { useState } from "react";
 import InventoryForm from "./components/InventoryForm";
 import InventoryTable from "./components/InventoryTable";
+import AppLayout from './components/AppLayout';
+import PatientRegistrationForm from './components/PatientRegistrationForm';
 
-function App() {
+export function App() {
   const [inventory, setInventory] = useState([
     {
       id: 1,
@@ -25,18 +27,7 @@ function App() {
       <InventoryTable
         inventory={inventory}
       />
-    </div>
-  );
-}
-
-export default App;
-
-import AppLayout from './components/AppLayout';
-import PatientRegistrationForm from './components/PatientRegistrationForm';
-
-export default function App() {
-  return (
-    <AppLayout>
+      <AppLayout>
       {(activeTab) => (
         <div>
           {activeTab === 'dashboard' && (
@@ -63,5 +54,14 @@ export default function App() {
         </div>
       )}
     </AppLayout>
+    </div>
+    
   );
 }
+
+
+
+
+
+
+    
