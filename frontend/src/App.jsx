@@ -1,8 +1,10 @@
 import { useState } from "react";
 import InventoryForm from "./components/InventoryForm";
 import InventoryTable from "./components/InventoryTable";
+import AppLayout from './components/AppLayout';
+import PatientRegistrationForm from './components/PatientRegistrationForm';
 
-function App() {
+export function App() {
   const [inventory, setInventory] = useState([
     {
       id: 1,
@@ -25,17 +27,7 @@ function App() {
       <InventoryTable
         inventory={inventory}
       />
-    </div>
-  );
-}
-
-export default App;
-
-import AppLayout from './components/AppLayout';
-
-export default function App() {
-  return (
-    <AppLayout>
+      <AppLayout>
       {(activeTab) => (
         <div>
           {activeTab === 'dashboard' && (
@@ -56,8 +48,20 @@ export default function App() {
               <p>Appointment elements will be bound here during Week 4.</p>
             </div>
           )}
+          {activeTab === 'registration' && (
+            <PatientRegistrationForm />
+          )}
         </div>
       )}
     </AppLayout>
+    </div>
+    
   );
 }
+
+
+
+
+
+
+    
