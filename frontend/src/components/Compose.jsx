@@ -1,5 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { C, AUTHORIZED_ROLES } from "./receiptConstants";
+import { AccessDeniedBanner } from "./AccessDeniedBanner";
+
+// Re-export the isolated component so the unchanged test import path remains valid
+export { AccessDeniedBanner };
 
 function inputStyle(hasError) {
   return {
@@ -14,32 +18,6 @@ function inputStyle(hasError) {
     resize: "vertical",
     background: hasError ? "#FFF5F5" : "#fff",
   };
-}
-
-export function AccessDeniedBanner() {
-  return (
-    <div
-      data-testid="access-denied-banner"
-      style={{
-        background: "#FFF1F2",
-        border: `1.5px solid #FECDD3`,
-        borderRadius: 10,
-        padding: "20px 24px",
-        display: "flex",
-        gap: 14,
-        alignItems: "flex-start",
-      }}
-    >
-      <span style={{ fontSize: 22 }}>🚫</span>
-      <div>
-        <div style={{ fontWeight: 700, color: C.danger, marginBottom: 4 }}>Access Denied</div>
-        <div style={{ color: "#7F1D1D", fontSize: 14 }}>
-          Only <strong>admin</strong> and <strong>staff</strong> users can access the messaging
-          module. Switch to an authorized account to continue.
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default function Compose({ currentUser, onSend }) {
@@ -62,11 +40,15 @@ export default function Compose({ currentUser, onSend }) {
   function handleSend() {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
-    onSend({
-      subject:    subject.trim(),
-      content:    content.trim(),
-      recipients: recipients.split(",").map(r => r.trim()).filter(Boolean),
-    });
+    
+    if (onSend) {
+      onSend({
+        subject:    subject.trim(),
+        content:    content.trim(),
+        recipients: recipients.split(",").map(r => r.trim()).filter(Boolean),
+      });
+    }
+    
     setSubject(""); setContent(""); setRecipients(""); setErrors({});
     setSent(true);
     setTimeout(() => setSent(false), 2500);
