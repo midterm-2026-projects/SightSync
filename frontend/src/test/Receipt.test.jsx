@@ -6,8 +6,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 expect.extend(matchers);
 
-import ReceiptForm from '../components/Receiptform';
-import ReceiptLayout from '../components/Receiptlayout';
+import ReceiptForm from '../components/ReceiptForm';
+import ReceiptLayout from '../components/ReceiptLayout';
 
 // Shared base mock metrics matching your application screenshots
 const baselineMockProps = {
