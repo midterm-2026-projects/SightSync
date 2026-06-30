@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 
 export default function ReceiptForm({
   patientName, setPatientName,
@@ -7,10 +8,48 @@ export default function ReceiptForm({
   odRx, setOdRx,
   osRx, setOsRx,
   items, handleItemChange,
-  handlePrint
+  handlePrint,
+  onSubmit // Captured so the Vitest spies can verify submission success
 }) {
+  // Component state to render explicit error strings expected by the test file
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = {};
+
+    // Validate inputs using matching string conditions required by your tests
+    if (!patientName) newErrors.patientName = 'Patient Name is required';
+    if (!doctorName) newErrors.doctorName = 'Doctor Name is required';
+    if (!date) newErrors.date = 'Date is required';
+    if (!receiptNumber) newErrors.receiptNumber = 'Receipt Number is required';
+    if (!odRx) newErrors.odRx = 'OD Rx is required';
+    if (!osRx) newErrors.osRx = 'OS Rx is required';
+
+    items.forEach((item, index) => {
+      if (item.quantity === '' || item.quantity === null || item.quantity === undefined) {
+        newErrors[`itemQty-${index}`] = 'Item Quantity is required';
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    
+    // If a test validation spy is running, prioritize it over the browser layout action
+    if (onSubmit) {
+      onSubmit();
+    } else if (handlePrint) {
+      handlePrint();
+    }
+  };
+
   return (
-    <div className="input-panel no-print">
+    // FIX: Replaced wrapper div with <form> element so container.querySelector('form') resolves
+    <form className="input-panel no-print" onSubmit={handleSubmit}>
       {/* SCOPED FORM STYLES */}
       <style>{`
         .input-panel {
@@ -63,6 +102,12 @@ export default function ReceiptForm({
           background-color: #f0fdfa;
         }
 
+        .error-text {
+          color: #dc2626;
+          font-size: 12px;
+          margin-top: 4px;
+        }
+
         .input-row-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -71,13 +116,19 @@ export default function ReceiptForm({
 
         .item-input-row {
           display: flex;
-          gap: 10px;
-          align-items: center;
+          flex-direction: column;
           background: #f8fafc;
           padding: 10px;
           border-radius: 6px;
           margin-bottom: 10px;
           border: 1px solid #e2e8f0;
+        }
+
+        .item-fields-flex {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          width: 100%;
         }
 
         .flex-grow-2 { flex: 2; }
@@ -123,6 +174,7 @@ export default function ReceiptForm({
           value={patientName} 
           onChange={(e) => setPatientName(e.target.value)} 
         />
+        {errors.patientName && <span className="error-text">{errors.patientName}</span>}
       </div>
 
       <div className="input-group">
@@ -133,6 +185,7 @@ export default function ReceiptForm({
           value={doctorName} 
           onChange={(e) => setDoctorName(e.target.value)} 
         />
+        {errors.doctorName && <span className="error-text">{errors.doctorName}</span>}
       </div>
 
       <div className="input-row-grid">
@@ -144,6 +197,7 @@ export default function ReceiptForm({
             value={date} 
             onChange={(e) => setDate(e.target.value)} 
           />
+          {errors.date && <span className="error-text">{errors.date}</span>}
         </div>
         <div className="input-group">
           <label htmlFor="receiptNumberInput">Receipt Number</label>
@@ -153,6 +207,7 @@ export default function ReceiptForm({
             value={receiptNumber} 
             onChange={(e) => setReceiptNumber(e.target.value)} 
           />
+          {errors.receiptNumber && <span className="error-text">{errors.receiptNumber}</span>}
         </div>
       </div>
 
@@ -165,6 +220,7 @@ export default function ReceiptForm({
           value={odRx} 
           onChange={(e) => setOdRx(e.target.value)} 
         />
+        {errors.odRx && <span className="error-text">{errors.odRx}</span>}
       </div>
       <div className="input-group">
         <label htmlFor="osRxInput">OS (Left Eye)</label>
@@ -174,48 +230,56 @@ export default function ReceiptForm({
           value={osRx} 
           onChange={(e) => setOsRx(e.target.value)} 
         />
+        {errors.osRx && <span className="error-text">{errors.osRx}</span>}
       </div>
 
       <h3 className="section-divider-title">Line Items</h3>
       {items.map((item, index) => (
         <div key={index} className="item-input-row">
-          <div className="input-group flex-grow-2">
-            <label htmlFor={`itemDescInput-${index}`}>Description</label>
-            <input 
-              id={`itemDescInput-${index}`} 
-              type="text" 
-              value={item.name} 
-              onChange={(e) => handleItemChange(index, 'name', e.target.value)} 
-            />
+          <div className="item-fields-flex">
+            <div className="input-group flex-grow-2">
+              <label htmlFor={`itemDescInput-${index}`}>Description</label>
+              <input 
+                id={`itemDescInput-${index}`} 
+                type="text" 
+                value={item.name} 
+                onChange={(e) => handleItemChange(index, 'name', e.target.value)} 
+              />
+            </div>
+            <div className="input-group width-mini">
+              <label htmlFor={`itemQtyInput-${index}`}>Qty</label>
+              <input 
+                id={`itemQtyInput-${index}`} 
+                type="number" 
+                min="1" 
+                required // Triggers HTML5 native constraints verified by test rules
+                value={item.quantity} 
+                onChange={(e) => handleItemChange(index, 'quantity', e.target.value)} 
+              />
+            </div>
+            <div className="input-group width-small">
+              <label htmlFor={`itemPriceInput-${index}`}>Price ($)</label>
+              <input 
+                id={`itemPriceInput-${index}`} 
+                type="number" 
+                step="0.01" 
+                value={item.price} 
+                onChange={(e) => handleItemChange(index, 'price', e.target.value)} 
+              />
+            </div>
           </div>
-          <div className="input-group width-mini">
-            <label htmlFor={`itemQtyInput-${index}`}>Qty</label>
-            <input 
-              id={`itemQtyInput-${index}`} 
-              type="number" 
-              min="1" 
-              value={item.quantity} 
-              onChange={(e) => handleItemChange(index, 'quantity', e.target.value)} 
-            />
-          </div>
-          <div className="input-group width-small">
-            <label htmlFor={`itemPriceInput-${index}`}>Price ($)</label>
-            <input 
-              id={`itemPriceInput-${index}`} 
-              type="number" 
-              step="0.01" 
-              value={item.price} 
-              onChange={(e) => handleItemChange(index, 'price', e.target.value)} 
-            />
-          </div>
+          {errors[`itemQty-${index}`] && (
+            <span className="error-text">{errors[`itemQty-${index}`]}</span>
+          )}
         </div>
       ))}
 
       <div className="action-button-container">
-        <button className="print-action-btn" onClick={handlePrint}>
+        {/* Changed to type="submit" so button submits the form natively */}
+        <button type="submit" className="print-action-btn">
           🖨️ Print Digital Receipt
         </button>
       </div>
-    </div>
+    </form>
   );
 }
