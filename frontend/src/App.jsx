@@ -1,5 +1,6 @@
 
 import AppLayout from './components/AppLayout';
+import PatientRegistrationForm from './components/PatientRegistrationForm';
 
 export default function App() {
   return (
@@ -23,6 +24,9 @@ export default function App() {
               <h2>Appointments Placeholder</h2>
               <p>Appointment elements will be bound here during Week 4.</p>
             </div>
+          )}
+          {activeTab === 'registration' && (
+            <PatientRegistrationForm />
           )}
         </div>
       )}

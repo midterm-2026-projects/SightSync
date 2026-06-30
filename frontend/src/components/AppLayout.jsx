@@ -27,6 +27,11 @@ export default function AppLayout({ children }) {
               </button>
             </li>
             <li>
+              <button onClick={() => setActiveTab('registration')}>
+                Patient Registration
+              </button>
+            </li>
+            <li>
               <button onClick={() => setActiveTab('appointments')}>
                 Appointment Schedules (W4)
               </button>
