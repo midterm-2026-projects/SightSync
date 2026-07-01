@@ -1,5 +1,5 @@
 // src/test/CommunicationLogs.test.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import '@testing-library/jest-dom';

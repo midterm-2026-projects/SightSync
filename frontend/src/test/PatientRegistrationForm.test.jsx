@@ -1,5 +1,4 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PatientRegistrationForm from '../components/Registration/PatientRegistrationForm.jsx';
 
@@ -30,12 +29,10 @@ describe('PatientRegistrationForm', () => {
     expect(screen.getByRole('button', { name: /Register Patient/i })).toBeInTheDocument();
   });
 
-  it('should show validation errors when required fields are missing', async () => {
-    const user = userEvent.setup();
-
+  it('should show validation errors when required fields are missing', () => {
     render(<PatientRegistrationForm />);
 
-    await user.click(screen.getByRole('button', { name: /Register Patient/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Register Patient/i }));
 
     expect(screen.getByText(/First name is required/i)).toBeInTheDocument();
     expect(screen.getByText(/Last name is required/i)).toBeInTheDocument();
@@ -46,32 +43,28 @@ describe('PatientRegistrationForm', () => {
     expect(screen.queryByText(/Patient registered successfully/i)).not.toBeInTheDocument();
   });
 
-  it('should calculate age when a birth date is entered', async () => {
-    const user = userEvent.setup();
-
+  it('should calculate age when a birth date is entered', () => {
     render(<PatientRegistrationForm />);
 
-    await user.type(screen.getByLabelText(/Birth Date/i), '2000-01-01');
+    fireEvent.change(screen.getByLabelText(/Birth Date/i), { target: { value: '2000-01-01' } });
 
     expect(screen.getByLabelText(/Age/i)).toHaveValue(26);
   });
 
-  it('should submit valid patient data and reset the form', async () => {
-    const user = userEvent.setup();
-
+  it('should submit valid patient data and reset the form', () => {
     render(<PatientRegistrationForm />);
 
-    await user.type(screen.getByLabelText(/First Name/i), 'Juan');
-    await user.type(screen.getByLabelText(/Last Name/i), 'Dela Cruz');
-    await user.type(screen.getByLabelText(/Birth Date/i), '2000-01-01');
-    await user.selectOptions(screen.getByLabelText(/Sex/i), 'Male');
-    await user.type(screen.getByLabelText(/Contact Number/i), '09123456789');
-    await user.type(screen.getByLabelText(/Email Address/i), 'juan@example.com');
-    await user.type(screen.getByLabelText(/^Address \*$/i), 'Manila City');
-    await user.type(screen.getByLabelText(/Emergency Contact/i), 'Maria Dela Cruz');
-    await user.type(screen.getByLabelText(/Medical History/i), 'None');
+    fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'Juan' } });
+    fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: 'Dela Cruz' } });
+    fireEvent.change(screen.getByLabelText(/Birth Date/i), { target: { value: '2000-01-01' } });
+    fireEvent.change(screen.getByLabelText(/Sex/i), { target: { value: 'Male' } });
+    fireEvent.change(screen.getByLabelText(/Contact Number/i), { target: { value: '09123456789' } });
+    fireEvent.change(screen.getByLabelText(/Email Address/i), { target: { value: 'juan@example.com' } });
+    fireEvent.change(screen.getByLabelText(/^Address \*$/i), { target: { value: 'Manila City' } });
+    fireEvent.change(screen.getByLabelText(/Emergency Contact/i), { target: { value: 'Maria Dela Cruz' } });
+    fireEvent.change(screen.getByLabelText(/Medical History/i), { target: { value: 'None' } });
 
-    await user.click(screen.getByRole('button', { name: /Register Patient/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Register Patient/i }));
 
     expect(console.log).toHaveBeenCalledWith('Patient Registration Payload:');
     expect(console.log).toHaveBeenCalledWith(
@@ -93,18 +86,16 @@ describe('PatientRegistrationForm', () => {
     expect(screen.getByLabelText(/Contact Number/i)).toHaveValue('');
   });
 
-  it('should clear typed data and validation messages when reset is clicked', async () => {
-    const user = userEvent.setup();
-
+  it('should clear typed data and validation messages when reset is clicked', () => {
     render(<PatientRegistrationForm />);
 
-    await user.type(screen.getByLabelText(/First Name/i), 'Juan');
-    await user.click(screen.getByRole('button', { name: /Register Patient/i }));
+    fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'Juan' } });
+    fireEvent.click(screen.getByRole('button', { name: /Register Patient/i }));
 
     expect(screen.getByLabelText(/First Name/i)).toHaveValue('Juan');
     expect(screen.getByText(/Last name is required/i)).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /Reset/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Reset/i }));
 
     expect(screen.getByLabelText(/First Name/i)).toHaveValue('');
     expect(screen.queryByText(/Last name is required/i)).not.toBeInTheDocument();

@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
@@ -13,7 +12,6 @@ vi.mock("../components/receiptConstants", () => ({
     text: "#1E293B",
     bg: "#F8FAFC",
   },
-  RoleBadge: ({ role }) => <span data-testid="role-badge">{role}</span>,
 }));
 
 // Mock log fixture data
