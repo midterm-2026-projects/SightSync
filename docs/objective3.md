@@ -53,25 +53,6 @@ Develop Digital Receipt Generation
 ### Day 1
 
 #### Task Description
-Integrate Payment and Receipt Features
-
-#### Sub-Tasks
-- Connect payment records to receipts
-- Test receipt generation workflow
-
-#### Deliverable(s)
-- payment records to receipts
-- receipt generation workflow
-
-#### Test Suite / PR Acceptance Criteria
-- It should be ensured that every successful payment record is correctly linked to its corresponding receipt in the database.
-- It should be verified that receipt generation is automatically triggered after payment confirmation and displayed without errors or missing data.
-
----
-
-### Day 2
-
-#### Task Description
 Develop Stakeholder Communication Updates
 
 #### Sub-Tasks
@@ -88,6 +69,25 @@ Develop Stakeholder Communication Updates
 - It should be ensured that only users with authorized roles admin/staff can create and send update messages.
 - It should be verified that unauthorized users are blocked from accessing the messaging module access denied response shown.
 - It should be confirmed that all sent messages are stored in the database with correct timestamp, sender ID, and message content.
+
+---
+
+### Day 2
+
+#### Task Description
+Integrate Payment and Receipt Features
+
+#### Sub-Tasks
+- Connect payment records to receipts
+- Test receipt generation workflow
+
+#### Deliverable(s)
+- payment records to receipts
+- receipt generation workflow
+
+#### Test Suite / PR Acceptance Criteria
+- It should be ensured that every successful payment record is correctly linked to its corresponding receipt in the database.
+- It should be verified that receipt generation is automatically triggered after payment confirmation and displayed without errors or missing data.
 
 ---
 
