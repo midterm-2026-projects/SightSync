@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Named export for <ReceiptLayout /> and default export to handle the case mismatch smoothly
 export function ReceiptLayout({
   patientName,

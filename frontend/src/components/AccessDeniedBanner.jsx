@@ -1,4 +1,3 @@
-import React from "react";
 import { C } from "./receiptConstants";
 
 // Named export (satisfies Compose.jsx re-exporting)
