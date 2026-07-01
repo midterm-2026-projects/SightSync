@@ -17,6 +17,16 @@ function InventoryForm({
       return;
     }
 
+    if (Number(price) <= 0) {
+    alert("Price must be greater than zero.");
+      return;
+    }
+
+    if (Number(stock) < 0) {
+    alert("Stock quantity cannot be negative.");
+      return;
+    }
+
     const newProduct = {
       id: Date.now(),
       name,
