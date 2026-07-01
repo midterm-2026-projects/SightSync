@@ -202,4 +202,98 @@ describe("InventoryForm Validation", () => {
     ).toHaveValue("Frame");
   });
 
+  it("should not submit when price is less than or equal to zero", async () => {
+    // Arrange
+    const alertSpy = vi
+    .spyOn(window, "alert")
+    .mockImplementation(() => {});
+
+    const mockSetInventory = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+    <InventoryForm
+      inventory={[]}
+      setInventory={mockSetInventory}
+     />
+    );
+
+     // Act
+     await user.type(
+      screen.getByPlaceholderText("Product Name"),
+      "Blue Cut Lens"
+    );
+
+     await user.type(
+      screen.getByPlaceholderText("Price"),
+      "0"
+    );
+
+     await user.type(
+      screen.getByPlaceholderText("Stock"),
+      "20"
+    );
+
+     await user.click(
+      screen.getByRole("button", {
+       name: /add product/i,
+      })
+    );
+
+    // Assert
+     expect(alertSpy).toHaveBeenCalledWith(
+    "Price must be greater than zero."
+    );
+
+    expect(mockSetInventory).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+  });
+
+  it("should not submit when stock quantity is negative", async () => {
+  // Arrange
+  const alertSpy = vi
+    .spyOn(window, "alert")
+    .mockImplementation(() => {});
+
+  const mockSetInventory = vi.fn();
+  const user = userEvent.setup();
+
+  render(
+    <InventoryForm
+      inventory={[]}
+      setInventory={mockSetInventory}
+    />
+  );
+
+  // Act
+  await user.type(
+    screen.getByPlaceholderText("Product Name"),
+    "Blue Cut Lens"
+  );
+
+  await user.type(
+    screen.getByPlaceholderText("Price"),
+    "1500"
+  );
+
+  await user.type(
+    screen.getByPlaceholderText("Stock"),
+    "-1"
+  );
+
+  await user.click(
+    screen.getByRole("button", {
+      name: /add product/i,
+    })
+  );
+
+  // Assert
+  expect(alertSpy).toHaveBeenCalledWith(
+    "Stock quantity cannot be negative."
+  );
+
+  expect(mockSetInventory).not.toHaveBeenCalled();
+  alertSpy.mockRestore();
+  });
+
 });
