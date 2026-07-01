@@ -1,7 +1,7 @@
 import { useState } from "react";
-import usePatientForm from "../hooks/usePatientForm";
-import { validatePatientForm } from "../utils/patientValidation";
-import { mapPatientToPayload } from "../utils/patientMapper";
+import usePatientForm from "../../hooks/usePatientForm";
+import { validatePatientForm } from "../../utils/patientValidation";
+import { mapPatientToPayload } from "../../utils/patientMapper";
 
 export default function PatientRegistrationForm() {
   const {
