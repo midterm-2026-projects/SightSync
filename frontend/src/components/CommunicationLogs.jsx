@@ -1,4 +1,3 @@
-import React from "react";
 import { C, AUTHORIZED_ROLES } from "./receiptConstants";
 import { AccessDeniedBanner } from "./AccessDeniedBanner";
 import LogRow from "./LogRow";

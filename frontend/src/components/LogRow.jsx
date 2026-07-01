@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { C, RoleBadge } from "./receiptConstants";
+import { useState } from "react";
+import { C } from "./receiptConstants";
+import RoleBadge from "./RoleBadge";
 
 export default function LogRow({ log, isNew }) {
   const [open, setOpen] = useState(false);
@@ -14,7 +15,7 @@ export default function LogRow({ log, isNew }) {
       
       // Returns a standard localized execution style without env dependencies
       return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
-    } catch (e) {
+    } catch {
       return "";
     }
   };
