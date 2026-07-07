@@ -51,3 +51,34 @@ export function validateInventory(data) {
     valid: true,
   };
 }
+
+
+// Validate Product Information
+export function validateProduct(data) {
+  const { name, type } = data;
+
+  if (!name || name.trim() === "") {
+    return {
+      valid: false,
+      message: "Product name is required.",
+    };
+  }
+
+  if (name.trim().length > 100) {
+    return {
+      valid: false,
+      message: "Product name must not exceed 100 characters.",
+    };
+  }
+
+  if (!type || !["Lens", "Frame"].includes(type)) {
+    return {
+      valid: false,
+      message: "Product type must be either Lens or Frame.",
+    };
+  }
+
+  return {
+    valid: true,
+  };
+}

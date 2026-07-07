@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validateInventory } from "../../../src/objective2/services/inventoryServices.js";
+import { validateInventory, validateProduct } from "../../../src/objective2/services/inventoryServices.js";
 
     describe("Inventory Validation Service", () => {
 
@@ -85,5 +85,94 @@ import { validateInventory } from "../../../src/objective2/services/inventorySer
     expect(result.valid).toBe(false);
 
     });
+
+    
+
+});
+
+describe("Product Validation Service", () => {
+
+  it("should return valid when product data is correct", () => {
+
+    // Arrange
+    const product = {
+      name: "Blue Cut Lens",
+      type: "Lens",
+    };
+
+    // Act
+    const result = validateProduct(product);
+
+    // Assert
+    expect(result.valid).toBe(true);
+
+  });
+
+  it("should return invalid when product name is empty", () => {
+
+    // Arrange
+    const product = {
+      name: "",
+      type: "Lens",
+    };
+
+    // Act
+    const result = validateProduct(product);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Product name is required.");
+
+  });
+
+  it("should return invalid when product name exceeds 100 characters", () => {
+
+    // Arrange
+    const product = {
+      name: "A".repeat(101),
+      type: "Lens",
+    };
+
+    // Act
+    const result = validateProduct(product);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Product name must not exceed 100 characters.");
+
+  });
+
+  it("should return invalid when product type is incorrect", () => {
+
+    // Arrange
+    const product = {
+      name: "Blue Cut Lens",
+      type: "Camera",
+    };
+
+    // Act
+    const result = validateProduct(product);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Product type must be either Lens or Frame.");
+
+  });
+
+  it("should return invalid when product type is missing", () => {
+
+    // Arrange
+    const product = {
+      name: "Blue Cut Lens",
+    };
+
+    // Act
+    const result = validateProduct(product);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Product type must be either Lens or Frame.");
+
+  });
 
 });
