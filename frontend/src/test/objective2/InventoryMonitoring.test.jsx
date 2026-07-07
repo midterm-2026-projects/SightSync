@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import InventoryMonitoring from "../components/InventoryMonitoring";
+import InventoryMonitoring from "../../components/objective2/InventoryMonitoring";
 
 describe("InventoryMonitoring", () => {
 
