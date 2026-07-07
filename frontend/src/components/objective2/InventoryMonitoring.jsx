@@ -1,4 +1,4 @@
-import inventoryData from "../data/inventoryData";
+import inventoryData from "../../data/inventoryData";
 import InventoryTable from "./InventoryTable";
 
 function InventoryMonitoring() {
