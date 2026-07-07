@@ -1,0 +1,24 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.14",
+    "pg": "^8.22.0",
+    "supertest": "^7.2.2"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.10"
+  }
+}
