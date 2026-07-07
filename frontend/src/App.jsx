@@ -1,12 +1,12 @@
 import { useState } from "react";
 
 // Module A: Stakeholder Communication
-import Compose from "./components/Compose";
-import CommunicationLogs from "./components/CommunicationLogs";
+import Compose from "./components/objective3/Compose";
+import CommunicationLogs from "./components/objective3/CommunicationLogs";
 
 // Module B: Optometry Receipt Creator
-import ReceiptForm from "./components/ReceiptForm";
-import ReceiptLayout from "./components/ReceiptLayout";
+import ReceiptForm from "./components/objective3/ReceiptForm";
+import ReceiptLayout from "./components/objective3/ReceiptLayout";
 
 // Module C: Inventory Management
 import InventoryForm from "./components/InventoryForm";
@@ -17,10 +17,10 @@ import AppLayout from "./components/AppLayout";
 import PatientRegistrationForm from "./components/PatientRegistrationForm";
 
 // ✅ Module E: Payments + Receipts (Day 2)
-import PaymentsPanel from "./components/PaymentsPanel";
+import PaymentsPanel from "./components/objective3/PaymentsPanel";
 
 // Constants from sub-components context
-import { C } from "./components/receiptConstants";
+import { C } from "./components/objective3/receiptConstants";
 
 // --- Mock Config for Messaging Module ---
 const MOCK_USER = {

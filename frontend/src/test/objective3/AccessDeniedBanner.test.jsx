@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 // FIX: Adjusted path to target the components folder correctly relative to src/test/
-import AccessDeniedBanner from "../components/AccessDeniedBanner";
+import AccessDeniedBanner from "../../components/objective3/AccessDeniedBanner";
 
 // FIX: Adjusted mock target to reference the right path location relative to src/test/
 vi.mock("../components/receiptConstants", () => ({
