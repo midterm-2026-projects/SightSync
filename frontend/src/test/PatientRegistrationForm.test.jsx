@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import PatientRegistrationForm from '../components/PatientRegistrationForm.jsx';
+import PatientRegistrationForm from '../components/Registration/PatientRegistrationForm.jsx';
 
 import '@testing-library/jest-dom';
 
