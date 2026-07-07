@@ -45,8 +45,12 @@ class PaymentModel {
   }
 
   async delete(id) {
-    const res = await this.db.query('DELETE FROM payments WHERE id = $1', [id]);
-    return res.rowCount > 0;
+    try {
+      const res = await this.db.query('DELETE FROM payments WHERE id = $1', [id]);
+      return res.rowCount > 0;
+    } catch (err) {
+      throw new ConstraintError(`Failed to delete payment: ${err.message}`, err);
+    }
   }
 }
 

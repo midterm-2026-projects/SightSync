@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import db from '../../../../config/db.js';
 import ReceiptModel from '../models/receipt.js';
 import PaymentModel from '../models/payment.js';
@@ -8,6 +8,16 @@ describe('ReceiptModel Integration Tests (PostgreSQL)', () => {
   let receiptModel;
   let paymentModel;
   let sharedPayment;
+
+  beforeAll(async () => {
+    // Clean up tables once at the beginning
+    try {
+      await db.query('TRUNCATE TABLE receipts RESTART IDENTITY CASCADE;');
+      await db.query('TRUNCATE TABLE payments RESTART IDENTITY CASCADE;');
+    } catch (err) {
+      console.warn('Database cleanup warning during setup:', err.message);
+    }
+  });
 
   beforeEach(async () => {
     receiptModel = new ReceiptModel(db);
@@ -23,7 +33,12 @@ describe('ReceiptModel Integration Tests (PostgreSQL)', () => {
   });
 
   afterEach(async () => {
-    await db.query('TRUNCATE TABLE receipts, payments RESTART IDENTITY CASCADE;');
+    try {
+      await db.query('TRUNCATE TABLE receipts RESTART IDENTITY CASCADE;');
+      await db.query('TRUNCATE TABLE payments RESTART IDENTITY CASCADE;');
+    } catch (err) {
+      console.warn('Database cleanup warning during suite teardown:', err.message);
+    }
   });
 
   describe('create()', () => {
@@ -66,7 +81,12 @@ describe('ReceiptModel Integration Tests (PostgreSQL)', () => {
       };
 
       await receiptModel.create(receiptData1);
-      await expect(receiptModel.create(receiptData2)).rejects.toThrow(ConstraintError);
+      try {
+        await receiptModel.create(receiptData2);
+        throw new Error('Should have thrown ConstraintError');
+      } catch (err) {
+        expect(err.name).toBe('ConstraintError');
+      }
     });
   });
 

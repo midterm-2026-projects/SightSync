@@ -5,14 +5,14 @@ class DepositModel {
     this.db = db;
   }
 
-  async create({ customer_id, amount, deposit_date, status = 'held' }) {
+  async create({ amount, deposit_date, status = 'held' }) {
     try {
       const query = `
-        INSERT INTO deposits (customer_id, amount, deposit_date, status)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO deposits (amount, deposit_date, status)
+        VALUES ($1, $2, $3)
         RETURNING *;
       `;
-      const res = await this.db.query(query, [customer_id, amount, deposit_date, status]);
+      const res = await this.db.query(query, [amount, deposit_date, status]);
       return res.rows[0];
     } catch (err) {
       throw new ConstraintError(`Failed to create deposit: ${err.message}`, err);
@@ -22,11 +22,6 @@ class DepositModel {
   async findById(id) {
     const res = await this.db.query('SELECT * FROM deposits WHERE id = $1', [id]);
     return res.rows[0] || null;
-  }
-
-  async findByCustomer(customerId) {
-    const res = await this.db.query('SELECT * FROM deposits WHERE customer_id = $1 ORDER BY id', [customerId]);
-    return res.rows;
   }
 
   async findAll() {

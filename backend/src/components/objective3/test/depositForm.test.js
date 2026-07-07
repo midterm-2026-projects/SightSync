@@ -63,7 +63,7 @@ describe('DepositModel Integration Tests (PostgreSQL)', () => {
       await depositModel.create({ amount: 40.00, deposit_date: new Date().toISOString(), status: 'held' });
       await depositModel.create({ amount: 60.00, deposit_date: new Date().toISOString(), status: 'cleared' });
 
-      const targetedRecords = await depositModel.findByCustomer(1);
+      const targetedRecords = await depositModel.findAll();
       expect(targetedRecords.length).toBeGreaterThanOrEqual(2);
     });
   });
