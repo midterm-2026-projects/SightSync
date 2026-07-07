@@ -82,12 +82,11 @@ The objective of the Inventory and Order Tracking module is to efficiently manag
 #### Sub-Tasks
 - Configure Neon PostgreSQL connection
 - Create lenses and frames database tables
-- Create inventory routes
+- Create inventory routes.
 
 #### Deliverables
 - backend/src/config/db.js
-- create_lenses_table.sql
-- create_frames_table.sql
+- added table in neon db site
 - backend/src/routes/inventory.js
 
 #### Acceptance Criteria
