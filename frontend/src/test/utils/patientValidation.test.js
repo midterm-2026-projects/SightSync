@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validatePatientForm } from '../utils/patientValidation';
+import { validatePatientForm } from '../../utils/patientValidation';
 
 const validFormData = {
   firstName: 'Juan',
