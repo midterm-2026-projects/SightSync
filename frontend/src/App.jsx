@@ -21,6 +21,7 @@ import PaymentsPanel from "./components/objective3/PaymentsPanel";
 
 // Constants from sub-components context
 import { C } from "./components/objective3/receiptConstants";
+import PaymentValidation from "./components/objective3/PaymentValidation";
 
 // --- Mock Config for Messaging Module ---
 const MOCK_USER = {
@@ -380,6 +381,10 @@ function App() {
       )}
     </AppLayout>
   );
+  
+  function App() {
+  return <PaymentValidation />;
+}
 }
 
 export default App;
