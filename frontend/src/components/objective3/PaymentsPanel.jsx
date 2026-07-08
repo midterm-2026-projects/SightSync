@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PaymentForm from "./PaymentForm";
 import PaymentReceiptView from "./PaymentReceiptView";
-import { fetchPayments } from "../services/paymentsApi";
+import { fetchPayments } from "../../services/paymentsApi";
 
 export default function PaymentsPanel({ prefill, __testOnSuccessRef }) {
   const [history, setHistory] = useState([]);
