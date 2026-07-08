@@ -2,7 +2,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import '@testing-library/jest-dom';
-import Compose, { AccessDeniedBanner } from "../components/Compose";
+import Compose, { AccessDeniedBanner } from "../../components/objective3/Compose";
 
 const adminUser  = { id: "u1", name: "Alice Admin",   role: "admin" };
 const staffUser  = { id: "u2", name: "Sam Staff",     role: "staff" };

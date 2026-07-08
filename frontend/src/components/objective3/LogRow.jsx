@@ -6,14 +6,10 @@ export default function LogRow({ log, isNew }) {
   const [open, setOpen] = useState(false);
 
   // Safe Cross-Platform Time String Extraction
-  // This bypasses local host timezone drift to keep tests fully stable
   const renderTime = () => {
     try {
       const d = new Date(log.timestamp);
-      // Fallback fallback mechanism if an invalid date string passes through
       if (isNaN(d.getTime())) return "";
-      
-      // Returns a standard localized execution style without env dependencies
       return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
     } catch {
       return "";
