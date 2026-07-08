@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import InventoryTable from "../components/InventoryTable";
+import InventoryTable from "../../components/objective2/InventoryTable";
 
 describe("InventoryTable", () => {
   const inventory = [

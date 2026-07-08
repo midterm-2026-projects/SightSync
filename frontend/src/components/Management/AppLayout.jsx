@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import InventoryForm from '../InventoryForm';
-import InventoryTable from '../InventoryTable';
+import InventoryForm from '../objective2/InventoryForm';
+import InventoryTable from '../objective2/InventoryTable';
 import PatientDirectoryView from './PatientDirectoryView';
 import PatientRegistrationForm from '../Registration/PatientRegistrationForm';
 

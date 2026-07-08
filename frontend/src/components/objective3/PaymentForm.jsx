@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { confirmPayment, createPayment } from "../services/paymentsApi";
+import { confirmPayment, createPayment } from "../../services/paymentsApi";
 
 const currency = (value) => `₱${Number(value || 0).toFixed(2)}`;
 

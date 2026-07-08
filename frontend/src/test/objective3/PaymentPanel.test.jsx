@@ -2,10 +2,16 @@
 
 import { render, screen, waitFor, act } from "@testing-library/react";
 import { vi, describe, test, expect, beforeEach } from "vitest";
-import PaymentsPanel from "../../src/components/PaymentsPanel";
-import * as api from "../../src/services/paymentsApi";
+import React from "react";
+import PaymentsPanel from "../../components/objective3/PaymentsPanel";
+import * as api from "../../services/paymentsApi";
 
-vi.mock("../../src/services/paymentsApi");
+// Fixed: The mock path must match your exact import string above
+vi.mock("../../services/paymentsApi", () => {
+  return {
+    fetchPayments: vi.fn()
+  };
+});
 
 const HISTORY = [
   {
@@ -34,7 +40,13 @@ const HISTORY = [
 
 beforeEach(() => {
   vi.clearAllMocks();
-  api.fetchPayments.mockResolvedValue(HISTORY);
+  
+  // Fixed: Fallback protection using vi.spyOn just in case the namespace is locked
+  if (api.fetchPayments && typeof api.fetchPayments.mockResolvedValue === 'function') {
+    api.fetchPayments.mockResolvedValue(HISTORY);
+  } else {
+    vi.spyOn(api, 'fetchPayments').mockResolvedValue(HISTORY);
+  }
 });
 
 describe("PaymentsPanel — rendering", () => {
@@ -75,13 +87,23 @@ describe("PaymentsPanel — rendering", () => {
   });
 
   test("shows loading state before data arrives", () => {
-    api.fetchPayments.mockReturnValue(new Promise(() => {})); // never resolves
+    if (api.fetchPayments && typeof api.fetchPayments.mockReturnValue === 'function') {
+      api.fetchPayments.mockReturnValue(new Promise(() => {})); 
+    } else {
+      vi.spyOn(api, 'fetchPayments').mockReturnValue(new Promise(() => {}));
+    }
+    
     render(<PaymentsPanel />);
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
   test("shows empty message when no payments", async () => {
-    api.fetchPayments.mockResolvedValue([]);
+    if (api.fetchPayments && typeof api.fetchPayments.mockResolvedValue === 'function') {
+      api.fetchPayments.mockResolvedValue([]);
+    } else {
+      vi.spyOn(api, 'fetchPayments').mockResolvedValue([]);
+    }
+
     render(<PaymentsPanel />);
     await waitFor(() =>
       expect(screen.getByText(/no payments yet/i)).toBeInTheDocument()

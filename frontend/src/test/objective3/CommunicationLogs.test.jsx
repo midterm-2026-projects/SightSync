@@ -3,7 +3,7 @@ import { useState } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import '@testing-library/jest-dom';
-import CommunicationLogs from "../components/CommunicationLogs";
+import CommunicationLogs from "../../components/objective3/CommunicationLogs";
 
 const adminUser  = { id: "u1", name: "Alice Admin",   role: "admin" };
 const staffUser  = { id: "u2", name: "Sam Staff",     role: "staff" };
