@@ -55,7 +55,7 @@ describe("Patient Model (integration)", () => {
 
 
       const rows = await getAllPatients();
-
+      console.log(rows)
       // Some environments may have existing rows; just ensure our row is present.
       const found = rows.find((r) => r.id === createdPatientIds[0]);
       expect(found).toBeTruthy();

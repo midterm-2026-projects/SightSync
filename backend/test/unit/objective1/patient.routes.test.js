@@ -1,14 +1,18 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import express from "express";
 import request from "supertest";
 
-import db from "../../../database/db.js";
 import patientRoutes from "../../../src/objective1/routes/patient.routes.js";
 import * as PatientModel from "../../../src/objective1/models/patient.model.js";
 
-describe("patient.routes (integration, no mocks)", () => {
+vi.mock("../../../src/objective1/models/patient.model.js", () => ({
+  getAllPatients: vi.fn(),
+  getPatientById: vi.fn(),
+  createPatient: vi.fn(),
+}));
+
+describe("patient.routes (unit, with mocks)", () => {
   let app;
-  let createdPatientIds;
 
   const buildPatient = (overrides = {}) => {
     return {
@@ -29,56 +33,48 @@ describe("patient.routes (integration, no mocks)", () => {
   };
 
   beforeEach(() => {
-    if (!process.env.DATABASE_URL) {
-      throw new Error(
-        "DATABASE_URL is not set. Tests require a real Postgres database.",
-      );
-    }
-
-    createdPatientIds = [];
+    vi.clearAllMocks();
 
     app = express();
     app.use(express.json());
     app.use("/api/patients", patientRoutes);
   });
 
-  afterEach(async () => {
-    if (createdPatientIds.length) {
-      await Promise.all(
-        createdPatientIds.map((id) =>
-          db.query("DELETE FROM patients WHERE id = $1", [id]),
-        ),
-      );
-    }
-  });
-
   it("GET / returns patients", async () => {
-    const created = await PatientModel.createPatient(buildPatient());
-    createdPatientIds.push(created.id);
+    const patients = [
+      { id: 1, ...buildPatient({ first_name: "Jane" }) },
+      { id: 2, ...buildPatient({ first_name: "John" }) },
+    ];
+
+    vi.spyOn(PatientModel, "getAllPatients").mockResolvedValue(patients);
 
     const res = await request(app).get("/api/patients");
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
 
-    const found = res.body.data.find((p) => p.id === created.id);
+    const found = res.body.data.find((p) => p.id === 1);
     expect(found).toBeTruthy();
-    expect(found.first_name).toBe(created.first_name);
+    expect(found.first_name).toBe("Jane");
   });
 
   it("GET /:id returns a patient (found)", async () => {
-    const created = await PatientModel.createPatient(buildPatient());
-    createdPatientIds.push(created.id);
+    const created = { id: 10, ...buildPatient({ first_name: "Jane" }) };
+
+    vi.spyOn(PatientModel, "getPatientById").mockResolvedValue(created);
 
     const res = await request(app).get(`/api/patients/${created.id}`);
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data.id).toBe(created.id);
-    expect(res.body.data.first_name).toBe(created.first_name);
+    expect(res.body.data.first_name).toBe("Jane");
   });
 
   it("GET /:id returns 404 when patient not found", async () => {
+    vi.spyOn(PatientModel, "getPatientById").mockResolvedValue(undefined);
+
     const res = await request(app).get("/api/patients/999999");
 
     expect(res.status).toBe(404);
@@ -88,6 +84,9 @@ describe("patient.routes (integration, no mocks)", () => {
 
   it("POST / creates a patient", async () => {
     const payload = buildPatient({ first_name: "Jane" });
+    const created = { id: 123, ...payload };
+
+    vi.spyOn(PatientModel, "createPatient").mockResolvedValue(created);
 
     const res = await request(app).post("/api/patients").send(payload);
 
@@ -95,8 +94,7 @@ describe("patient.routes (integration, no mocks)", () => {
     expect(res.body.success).toBe(true);
     expect(res.body.data).toBeTruthy();
     expect(res.body.data.first_name).toBe("Jane");
-
-    createdPatientIds.push(res.body.data.id);
+    expect(res.body.data.id).toBe(123);
   });
 });
 
