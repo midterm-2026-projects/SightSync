@@ -33,6 +33,8 @@ describe("GET Inventory Routes", () => {
       frames: [],
     });
 
+  });
+
     it("should return inventory with data", async () => {
 
   // Arrange
@@ -290,8 +292,6 @@ describe("POST /inventory", () => {
     );
 
   });
-
-});
 
 });
 
