@@ -1,10 +1,19 @@
+// tests/frontend/PaymentForm.test.jsx
+
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import PaymentForm from "../components/PaymentForm";
-import * as api from "../services/paymentsApi";
+import React from "react";
+import PaymentForm from "../../components/objective3/PaymentForm";
+import * as api from "../../services/paymentsApi";
 import "@testing-library/jest-dom";
 
-vi.mock("../services/paymentsApi");
+// Fixed: Path must match your exact import string above, and explicitly declare mock functions
+vi.mock("../../services/paymentsApi", () => {
+  return {
+    createPayment: vi.fn(),
+    confirmPayment: vi.fn(),
+  };
+});
 
 const MOCK_PAYMENT = {
   id: "pay-001",
@@ -23,7 +32,7 @@ const MOCK_RECEIPT = {
   subtotal: 265,
   tax: 31.8,
   total: 296.8,
-  generated_at: new Date().toISOString(),
+  generated_at: "2026-06-23T14:30:00.000Z",
 };
 
 beforeEach(() => {
@@ -63,7 +72,11 @@ describe("PaymentForm — rendering", () => {
 
 describe("PaymentForm — Step 1: create payment", () => {
   it("should call createPayment with correct data on submit", async () => {
-    api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    if (api.createPayment && typeof api.createPayment.mockResolvedValue === 'function') {
+      api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    } else {
+      vi.spyOn(api, 'createPayment').mockResolvedValue(MOCK_PAYMENT);
+    }
 
     render(
       <PaymentForm
@@ -92,7 +105,11 @@ describe("PaymentForm — Step 1: create payment", () => {
   });
 
   it("should show confirmation step after payment created", async () => {
-    api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    if (api.createPayment && typeof api.createPayment.mockResolvedValue === 'function') {
+      api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    } else {
+      vi.spyOn(api, 'createPayment').mockResolvedValue(MOCK_PAYMENT);
+    }
 
     render(
       <PaymentForm
@@ -112,7 +129,11 @@ describe("PaymentForm — Step 1: create payment", () => {
   });
 
   it("should show the payment ID after step 1", async () => {
-    api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    if (api.createPayment && typeof api.createPayment.mockResolvedValue === 'function') {
+      api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    } else {
+      vi.spyOn(api, 'createPayment').mockResolvedValue(MOCK_PAYMENT);
+    }
 
     render(
       <PaymentForm
@@ -130,7 +151,11 @@ describe("PaymentForm — Step 1: create payment", () => {
   });
 
   it("should show error message when createPayment fails", async () => {
-    api.createPayment.mockRejectedValue(new Error("Network error"));
+    if (api.createPayment && typeof api.createPayment.mockRejectedValue === 'function') {
+      api.createPayment.mockRejectedValue(new Error("Network error"));
+    } else {
+      vi.spyOn(api, 'createPayment').mockRejectedValue(new Error("Network error"));
+    }
 
     render(<PaymentForm prefill={{ patientName: "X", doctorName: "Y" }} />);
     fireEvent.change(screen.getByLabelText(/amount/i), {
@@ -152,11 +177,22 @@ describe("PaymentForm — Step 1: create payment", () => {
 
 describe("PaymentForm — Step 2: confirm + AC-2 receipt display", () => {
   async function setupToConfirmStep() {
-    api.createPayment.mockResolvedValue(MOCK_PAYMENT);
-    api.confirmPayment.mockResolvedValue({
+    if (api.createPayment && typeof api.createPayment.mockResolvedValue === 'function') {
+      api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    } else {
+      vi.spyOn(api, 'createPayment').mockResolvedValue(MOCK_PAYMENT);
+    }
+
+    const confirmRes = {
       payment: { ...MOCK_PAYMENT, status: "confirmed" },
       receipt: MOCK_RECEIPT,
-    });
+    };
+
+    if (api.confirmPayment && typeof api.confirmPayment.mockResolvedValue === 'function') {
+      api.confirmPayment.mockResolvedValue(confirmRes);
+    } else {
+      vi.spyOn(api, 'confirmPayment').mockResolvedValue(confirmRes);
+    }
 
     const onSuccess = vi.fn();
 
@@ -239,8 +275,17 @@ describe("PaymentForm — Step 2: confirm + AC-2 receipt display", () => {
   });
 
   it("should show error text when confirmPayment fails", async () => {
-    api.createPayment.mockResolvedValue(MOCK_PAYMENT);
-    api.confirmPayment.mockRejectedValue(new Error("Confirm failed"));
+    if (api.createPayment && typeof api.createPayment.mockResolvedValue === 'function') {
+      api.createPayment.mockResolvedValue(MOCK_PAYMENT);
+    } else {
+      vi.spyOn(api, 'createPayment').mockResolvedValue(MOCK_PAYMENT);
+    }
+
+    if (api.confirmPayment && typeof api.confirmPayment.mockRejectedValue === 'function') {
+      api.confirmPayment.mockRejectedValue(new Error("Confirm failed"));
+    } else {
+      vi.spyOn(api, 'confirmPayment').mockRejectedValue(new Error("Confirm failed"));
+    }
 
     render(
       <PaymentForm

@@ -14,7 +14,7 @@ vi.mock("../../server/db.cjs", () => {
   };
 });
 
-const app = require("../../server/server.cjs");
+const app = require("../../../server/server.cjs");
 
 // ─── Shared test payload ──────────────────────────────────────────────────────
 const VALID_PAYMENT = {
@@ -330,7 +330,7 @@ describe("GET /api/payments — list all payments", () => {
 // SUITE 5 — receiptGenerator unit tests
 // ═════════════════════════════════════════════════════════════════════════════
 describe("receiptGenerator — unit tests", () => {
-  const { generateReceipt } = require("../../server/receiptGenerator.cjs");
+  const { generateReceipt } = require("../../../server/receiptGenerator.cjs");
 
   const mockPayment = {
     id: "pay-unit-001",
