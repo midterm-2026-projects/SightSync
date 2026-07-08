@@ -416,4 +416,36 @@ describe("PUT /inventory/:table/:id", () => {
 
   });
 
+  it("should return validation error when table is invalid", async () => {
+
+    const response = await request(app)
+      .put("/inventory/products/1")
+      .send({
+        price: 2000,
+      });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body.message).toBe(
+      "Invalid inventory table."
+    );
+
+  });
+
+  it("should return validation error when inventory id is invalid", async () => {
+
+    const response = await request(app)
+      .put("/inventory/lenses/abc")
+      .send({
+        price: 2000,
+      });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body.message).toBe(
+      "Invalid inventory ID."
+    );
+
+  });
+
 });

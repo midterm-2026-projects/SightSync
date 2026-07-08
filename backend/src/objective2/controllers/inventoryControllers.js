@@ -63,6 +63,20 @@ export async function editInventoryPrice(req, res) {
   const { id, table } = req.params;
   const { price } = req.body;
 
+  // Validate table
+if (!["lenses", "frames"].includes(table)) {
+  return res.status(400).json({
+    message: "Invalid inventory table.",
+  });
+}
+
+// Validate id
+if (isNaN(id) || Number(id) <= 0) {
+  return res.status(400).json({
+    message: "Invalid inventory ID.",
+  });
+}
+
   const validation = validatePrice(price);
 
   if (!validation.valid) {
