@@ -1,63 +1,42 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, afterEach, afterAll } from "vitest";
 import pool from "../../../database/db.js";
-import {getAllInventory, createInventory,} from "../../../src/objective2/models/inventoryModels.js";
+import {getAllInventory, createInventory, updateInventoryPrice,} from "../../../src/objective2/models/inventoryModels.js";
 
-// Mock database
-vi.mock("../../../database/db.js", () => ({
-  default: {
-    query: vi.fn(),
-  },
-}));
+
+const createdRecords = [];
 
 describe("Inventory Models", () => {
 
-  beforeEach(() => {
-    vi.clearAllMocks();
+  afterEach(async () => {
+
+    while (createdRecords.length > 0) {
+
+      const record = createdRecords.pop();
+
+      await pool.query(
+        `DELETE FROM ${record.table} WHERE id = $1`,
+        [record.id]
+      );
+
+    }
+
   });
 
-  it("should fetch all inventory", async () => {
+  afterAll(async () => {
+    await pool.end();
+  });
 
-    // Arrange
-    pool.query
-      .mockResolvedValueOnce({
-        rows: [
-          {
-            id: 1,
-            name: "Blue Cut Lens",
-            price: 1500,
-            stock: 20,
-          },
-        ],
-      })
-      .mockResolvedValueOnce({
-        rows: [
-          {
-            id: 1,
-            name: "Metal Frame",
-            price: 2500,
-            stock: 5,
-          },
-        ],
-      });
+  it("should retrieve all inventory from the database", async () => {
 
     // Act
     const result = await getAllInventory();
 
     // Assert
-    expect(pool.query).toHaveBeenCalledTimes(2);
+    expect(result).toHaveProperty("lenses");
+    expect(result).toHaveProperty("frames");
 
-    expect(pool.query).toHaveBeenNthCalledWith(
-      1,
-      "SELECT * FROM lenses"
-    );
-
-    expect(pool.query).toHaveBeenNthCalledWith(
-      2,
-      "SELECT * FROM frames"
-    );
-
-    expect(result.lenses).toHaveLength(1);
-    expect(result.frames).toHaveLength(1);
+    expect(Array.isArray(result.lenses)).toBe(true);
+    expect(Array.isArray(result.frames)).toBe(true);
 
   });
 
@@ -65,38 +44,31 @@ describe("Inventory Models", () => {
 
     // Arrange
     const inventory = {
-      name: "Blue Cut Lens",
+      name: `Lens ${Date.now()}`,
       type: "Lens",
       price: 1500,
       stock: 20,
     };
 
-    pool.query.mockResolvedValue({
-      rows: [
-        {
-          id: 1,
-          ...inventory,
-        },
-      ],
-    });
-
     // Act
     const result = await createInventory(inventory);
 
-    // Assert
-    expect(pool.query).toHaveBeenCalledWith(
-      expect.stringContaining("INSERT INTO lenses"),
-      [
-        "Blue Cut Lens",
-        1500,
-        20,
-      ]
+    createdRecords.push({
+      table: "lenses",
+      id: result.id,
+    });
+
+    // Verify from database
+    const verify = await pool.query(
+      "SELECT * FROM lenses WHERE id = $1",
+      [result.id]
     );
 
-    expect(result.name).toBe("Blue Cut Lens");
-    expect(result.type).toBe("Lens");
-    expect(result.price).toBe(1500);
-    expect(result.stock).toBe(20);
+    // Assert
+    expect(verify.rows).toHaveLength(1);
+    expect(verify.rows[0].name).toBe(inventory.name);
+    expect(verify.rows[0].price).toBe("1500.00");
+    expect(verify.rows[0].stock).toBe(20);
 
   });
 
@@ -104,39 +76,90 @@ describe("Inventory Models", () => {
 
     // Arrange
     const inventory = {
-      name: "Metal Frame",
+      name: `Frame ${Date.now()}`,
       type: "Frame",
       price: 2500,
-      stock: 5,
+      stock: 10,
     };
-
-    pool.query.mockResolvedValue({
-      rows: [
-        {
-          id: 2,
-          ...inventory,
-        },
-      ],
-    });
 
     // Act
     const result = await createInventory(inventory);
 
-    // Assert
-    expect(pool.query).toHaveBeenCalledWith(
-      expect.stringContaining("INSERT INTO frames"),
-      [
-        "Metal Frame",
-        2500,
-        5,
-      ]
+    createdRecords.push({
+      table: "frames",
+      id: result.id,
+    });
+
+    // Verify from database
+    const verify = await pool.query(
+      "SELECT * FROM frames WHERE id = $1",
+      [result.id]
     );
 
-    expect(result.name).toBe("Metal Frame");
-    expect(result.type).toBe("Frame");
-    expect(result.price).toBe(2500);
-    expect(result.stock).toBe(5);
+    // Assert
+    expect(verify.rows).toHaveLength(1);
+    expect(verify.rows[0].name).toBe(inventory.name);
+    expect(verify.rows[0].price).toBe("2500.00");
+    expect(verify.rows[0].stock).toBe(10);
+
+  });
+
+
+  it("should update inventory price", async () => {
+
+    // Arrange
+    const inventory = {
+      name: `Lens ${Date.now()}`,
+      type: "Lens",
+      price: 1500,
+      stock: 20,
+    };
+
+    // Create inventory first
+    const created = await createInventory(inventory);
+
+    createdRecords.push({
+      table: "lenses",
+      id: created.id,
+    });
+
+    // Act
+    const updated = await updateInventoryPrice(
+      "lenses",
+      created.id,
+      2000
+    );
+
+    // Verify from database
+    const verify = await pool.query(
+      "SELECT * FROM lenses WHERE id = $1",
+      [created.id]
+    );
+
+    // Assert
+    expect(updated).toBeDefined();
+    expect(updated.id).toBe(created.id);
+
+    expect(Number(updated.price)).toBe(2000);
+
+    expect(Number(verify.rows[0].price)).toBe(2000);
+
+  });
+
+  it("should return null for an invalid table", async () => {
+
+    // Act
+    const result = await updateInventoryPrice(
+      "invalid_table",
+      1,
+      2000
+    );
+
+    // Assert
+    expect(result).toBeNull();
 
   });
 
 });
+
+    
