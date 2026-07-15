@@ -1,13 +1,5 @@
-import {
-  getAllInventory,
-  createInventory,
-  updateInventoryPrice,
-} from "../models/inventoryModels.js";
-
-import {
-  validateInventory,
-  validatePrice,
-} from "../services/inventoryServices.js";
+import {getAllInventory, createInventory, updateInventoryPrice,} from "../models/inventoryModels.js";
+import {validateInventory, validatePrice,} from "../services/inventoryServices.js";
 
 // GET Inventory
 export async function fetchInventory(req, res) {
