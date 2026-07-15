@@ -96,28 +96,6 @@ Integrate Payment and Receipt Features
 ### Day 1
 
 #### Task Description
-Design Payment and Receipt Management Module
-
-#### Sub-Tasks
-- Create database structure for payments and deposits
-- Design payment forms
-- Define receipt format
-
-#### Deliverable(s)
-- database structure for payments and deposits
-- payment forms
-- receipt format
-
-#### Test Suite / PR Acceptance Criteria
-- It should be ensured that database tables correctly store payments and deposits with proper field constraints NOT NULL, primary keys, foreign keys.
-- It should be verified that payment forms validate required fields amount > 0, valid date, required customer ID before submission.
-- It should be confirmed that receipt format remains consistent across all transactions and follows the defined template structure.
-
----
-
-### Day 2
-
-#### Task Description
 Implement Payment Recording Feature
 
 #### Sub-Tasks
@@ -137,9 +115,56 @@ Implement Payment Recording Feature
 
 ---
 
+## Day 2
+
+### Task Description
+
+Implement Payment Validation and Receipt Preview
+
+#### Sub-Tasks
+
+- Implement payment form input validation
+- Create receipt preview component
+- Connect payment form with receipt preview
+
+#### Deliverable(s)
+
+- Payment form validation
+- Receipt preview component
+- Payment form and receipt preview integration
+
+#### Test Suite / PR Acceptance Criteria
+
+- It should be verified that the payment form prevents submission when the Customer ID field is empty.
+- It should be ensured that the payment amount accepts only values greater than zero and that a valid transaction date is provided before submission.
+- It should be confirmed that the receipt preview displays the correct Customer ID, transaction type, payment amount, and transaction date after successful form submission.
+
+
+---
+
 ## Week 4
 
+
 ### Day 1
+
+#### Task Description
+Design Notification System
+
+#### Sub-Tasks
+- Define notification types
+- Design notification interface
+
+#### Deliverable(s)
+- notification types
+- notification interface
+
+#### Test Suite / PR Acceptance Criteria
+- It should be verified that notification types order update, payment alert, system message are correctly categorized and retrievable.
+- It should be confirmed that the notification UI displays messages in real-time and is properly sorted by newest to oldest.
+
+---
+
+### Day 2
 
 #### Task Description
 Implement Order Status Notifications
@@ -158,28 +183,6 @@ Implement Order Status Notifications
 - It should be ensured that status changes pending, processing, completed automatically trigger notifications.
 - It should be verified that notifications are sent immediately after status update and reflect correct order information.
 - It should be confirmed that notifications are received successfully on the user side and logged in the database with timestamps.
-
----
-
-### Day 2
-
-#### Task Description
-Design Notification System
-
-#### Sub-Tasks
-- Create notification database table
-- Define notification types
-- Design notification interface
-
-#### Deliverable(s)
-- notification database table
-- notification types
-- notification interface
-
-#### Test Suite / PR Acceptance Criteria
-- It should be ensured that the notification table correctly stores notification ID, user ID, type, message, and timestamp.
-- It should be verified that notification types order update, payment alert, system message are correctly categorized and retrievable.
-- It should be confirmed that the notification UI displays messages in real-time and is properly sorted by newest to oldest.
 
 ---
 
