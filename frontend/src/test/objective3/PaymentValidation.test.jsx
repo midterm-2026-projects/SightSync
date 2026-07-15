@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import PaymentValidation from "../../components/Objective3/PaymentValidation";
+import PaymentValidation from "../../components/objective3/PaymentValidation";
 
 describe("Payment Validation", () => {
 

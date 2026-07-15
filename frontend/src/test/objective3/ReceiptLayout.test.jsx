@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import '@testing-library/jest-dom'
-import ReceiptLayout from '../../components/Objective3/ReceiptLayout'
+import ReceiptLayout from '../../components/objective3/ReceiptLayout'
 
 describe('ReceiptLayout Component - Layout Columns & Formats', () => {
 
