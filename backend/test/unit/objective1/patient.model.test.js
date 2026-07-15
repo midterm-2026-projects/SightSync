@@ -58,7 +58,7 @@ describe("Patient Model (integration)", () => {
       console.log(rows)
       // Some environments may have existing rows; just ensure our row is present.
       const found = rows.find((r) => r.id === createdPatientIds[0]);
-      expect(found).toBeTruthy();
+      
       expect(found.first_name).toBe(patient.first_name);
 
     });

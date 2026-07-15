@@ -53,7 +53,7 @@ describe("Appointment Model Integration", () => {
                 26,
                 'Female',
                 '09123456789',
-                'jane.smith.${Date.now()}@example.com',
+                'jane@example.com',
                 'Batangas',
                 'Pending'
             )
