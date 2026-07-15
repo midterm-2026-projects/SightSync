@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
-import db from '../../../../config/db.js';
+import db from '../../../config/db.js';
 import ReceiptModel from '../models/receipt.js';
 import PaymentModel from '../models/payment.js';
 import { ConstraintError } from '../middleware/errors.js';
