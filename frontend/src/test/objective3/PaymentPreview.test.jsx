@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import ReceiptPreview from "../../components/Objective3/ReceiptPreview";
+import ReceiptPreview from "../../components/objective3/ReceiptPreview";
 
 describe("Receipt Preview", () => {
 
