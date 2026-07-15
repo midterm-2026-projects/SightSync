@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import PaymentReceiptView from "../../components/objective3/PaymentReceiptView";
+import PaymentReceiptView from "../../components/Objective3/PaymentReceiptView";
 
 // ─── Shared Mock Data ────────────────────────────────────────────────────────
 const MOCK_RECEIPT = {

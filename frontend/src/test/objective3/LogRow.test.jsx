@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 // Cleans out /test/objective3/ and targets /src/components/LogRow
-import LogRow from "../../components/objective3/LogRow"; 
+import LogRow from "../../components/Objective3/LogRow"; 
 
 describe("LogRow Component", () => {
   const sampleLog = {

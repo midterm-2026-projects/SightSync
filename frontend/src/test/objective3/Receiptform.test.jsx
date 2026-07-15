@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import '@testing-library/jest-dom'
-import ReceiptForm from '../../components/objective3/ReceiptForm'
+import ReceiptForm from '../../components/Objective3/ReceiptForm'
 
 // A wrapper component to manage the true state lifecycle during testing
 const TestFormWrapper = ({ onSubmit, handlePrint }) => {

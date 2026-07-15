@@ -3,7 +3,7 @@
 import { render, screen, waitFor, act } from "@testing-library/react";
 import { vi, describe, test, expect, beforeEach } from "vitest";
 import React from "react";
-import PaymentsPanel from "../../components/objective3/PaymentsPanel";
+import PaymentsPanel from "../../components/Objective3/PaymentsPanel";
 import * as api from "../../services/paymentsApi";
 
 // Fixed: The mock path must match your exact import string above
