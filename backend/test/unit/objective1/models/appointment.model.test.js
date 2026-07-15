@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock the database before importing the model
-vi.mock("../../../../database/db.js", () => ({
-    default: {
-        query: vi.fn()
-    }
-}));
+
 
 import db from "../../../../database/db.js";
 
