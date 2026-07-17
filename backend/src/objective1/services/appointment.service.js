@@ -7,34 +7,35 @@ import {
 } from "../models/appointment.model.js";
 
 import { getPatientById } from "../models/patient.model.js";
-// import { getDoctorAvailability, createDoctorAvailability } from "./doctorAvailability.service.js";
+import { getDoctorAvailability, createDoctorAvailability } from "./doctorAvailability.service.js";
 import { hasScheduleConflict } from "./conflict.service.js";
+import { sendAppointmentConfirmation } from "./notification.service.js";
 
-// export const converted_time = async (appointment) => {
-//   const {
-//     patient_id,
-//     doctor_id,
-//     appointment_date,
-//     appointment_time,
-//     appointment_type,
-//     status,
-//   } = appointment;
+export const converted_time = async (appointment) => {
+  const {
+    patient_id,
+    doctor_id,
+    appointment_date,
+    appointment_time,
+    appointment_type,
+    status,
+  } = appointment;
 
-//   const [hour, minute] = appointment_time.split(":").map(Number);
+  const [hour, minute] = appointment_time.split(":").map(Number);
 
-//   const end = new Date();
-//   end.setHours(hour, minute + 30, 0);
+  const end = new Date();
+  end.setHours(hour, minute + 30, 0);
 
-//   const endTime = end.toTimeString().slice(0, 8);
+  const endTime = end.toTimeString().slice(0, 8);
 
-//   return await createDoctorAvailability(
-//     doctor_id,
-//     appointment_date,
-//     appointment_time,
-//     endTime,
-//     "Booked",
-//   );
-// };
+  return await createDoctorAvailability(
+    doctor_id,
+    appointment_date,
+    appointment_time,
+    endTime,
+    "Booked",
+  );
+};
 
 const VALID_APPOINTMENT_TYPES = ["Consultation", "Follow-up"];
 
@@ -110,28 +111,30 @@ export const createAppointmentService = async (appointment) => {
 
   // Default status
   appointment.status = status || "Scheduled";
-//   const [hour, minute] = appointment_time.split(":").map(Number);
+  const [hour, minute] = appointment_time.split(":").map(Number);
 
-//   const end = new Date();
-//   end.setHours(hour, minute + 30, 0);
+  const end = new Date();
+  end.setHours(hour, minute + 30, 0);
 
-//   const endTime = end.toTimeString().slice(0, 8);
+  const endTime = end.toTimeString().slice(0, 8);
 
-//   // Get the doctor's existing booked slots
-//   const existingAppointments = await getDoctorAvailability(doctor_id);
+  // Get the doctor's existing booked slots
+  const existingAppointments = await getDoctorAvailability(doctor_id);
 
-//   // Check if the requested time overlaps
-//   const hasConflict = hasScheduleConflict(
-//     existingAppointments,
-//     appointment_time,
-//     endTime,
-//   );
+  // Check if the requested time overlaps
+  const hasConflict = hasScheduleConflict(
+    existingAppointments,
+    appointment_time,
+    endTime,
+  );
 
-//   if (hasConflict) {
-//     throw new Error("Doctor already has an appointment during this time.");
-//   }
-//   await converted_time(appointment);
-  return await createAppointment(appointment);
+  if (hasConflict) {
+    throw new Error("Doctor already has an appointment during this time.");
+  }
+  await converted_time(appointment);
+  const createdAppointment = await createAppointment(appointment);
+  await sendAppointmentConfirmation(createdAppointment);
+  return createdAppointment;
 };
 
 // ===========================
