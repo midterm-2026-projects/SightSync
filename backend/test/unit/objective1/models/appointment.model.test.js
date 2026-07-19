@@ -20,7 +20,6 @@ describe("Appointment Model Integration", () => {
         await db.query("DELETE FROM appointments");
         await db.query("DELETE FROM doctor_availability");
         await db.query("DELETE FROM patients");
-        await db.query("DELETE FROM doctors");
 
         const doctor = await db.query(
             `INSERT INTO doctors

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterAll } from "vitest";
 
 import db from "../../../../database/db.js";
 
@@ -24,7 +24,6 @@ describe("Doctor Availability Model Integration", () => {
     beforeEach(async () => {
         await db.query("DELETE FROM appointments");
         await db.query("DELETE FROM doctor_availability");
-        await db.query("DELETE FROM patients");
         await db.query("DELETE FROM doctors");
 
         const doctor = await db.query(
@@ -36,6 +35,11 @@ describe("Doctor Availability Model Integration", () => {
         );
 
         doctorId = doctor.rows[0].id;
+    });
+
+    afterAll(async () => {
+        await db.query("DELETE FROM appointments");
+        await db.query("DELETE FROM doctor_availability");
     });
 
     it("should create a new doctor availability record", async () => {
