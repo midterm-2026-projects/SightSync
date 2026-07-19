@@ -8,7 +8,7 @@ import {
   createPatient,
 } from "../../../../src/objective1/models/patient.model.js";
 
-describe("Patient Model (integration)", () => {
+describe("Patient Model (integration)", { concurrent: false }, () => {
   let createdPatientIds;
 
   beforeEach(async () => {
