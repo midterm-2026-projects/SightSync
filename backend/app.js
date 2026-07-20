@@ -6,9 +6,19 @@ import doctorAvailabilityRoutes from "./src/objective1/routes/doctorAvailability
 import orderRoutes from "./src/objective2/routes/order.js";
 import summaryRoutes from "./src/objective1/routes/summary.routes.js";
 
+import cors from "cors";
+
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:5173',
+];
+
 app.use(express.json());
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 
 
 app.get("/", (req, res) => {

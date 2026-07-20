@@ -6,6 +6,8 @@ import {
   getAllPatients,
   getPatientById,
   createPatient,
+  updatePatient,
+  deletePatient,
 } from "../../../../src/objective1/models/patient.model.js";
 
 describe("Patient Model (integration)", { concurrent: false }, () => {
@@ -61,7 +63,7 @@ describe("Patient Model (integration)", { concurrent: false }, () => {
       console.log(rows)
       // Some environments may have existing rows; just ensure our row is present.
       const found = rows.find((r) => r.id === createdPatientIds[0]);
-      
+
       expect(found.first_name).toBe(patient.first_name);
 
     });
@@ -122,5 +124,61 @@ describe("Patient Model (integration)", { concurrent: false }, () => {
       expect(created.status).toBe(patient.status);
     });
   });
+
+
+  describe("updatePatient()", () => {
+    it("it should update the patient", async () => {
+      const patient = {
+        first_name: "Maria",
+        last_name: "Santos",
+        middle_name: "R",
+        birth_date: "1994-02-20",
+        age: 32,
+        sex: "Female",
+        contact_number: "09987654321",
+        email: `maria.santos.${Date.now()}@example.com`,
+        address: "Manila",
+        emergency_contact: "Rico Santos",
+        medical_history: "Asthma",
+        status: "Pending",
+      };
+
+      const created = await createPatient(patient);
+      createdPatientIds.push(created.id);
+
+      const result = await updatePatient(createdPatientIds[0], patient);
+      expect(result).toBeTruthy();
+      expect(result.id).toBe(createdPatientIds[0]);
+      expect(result.first_name).toBe(patient.first_name);
+    })
+  })
+
+  describe("deletePatient()", () => {
+    it("should delete the patient", async () => {
+      const patient = {
+        first_name: "Maria",
+        last_name: "Santos",
+        middle_name: "R",
+        birth_date: "1994-02-20",
+        age: 32,
+        sex: "Female",
+        contact_number: "09987654321",
+        email: `maria.santos.${Date.now()}@example.com`,
+        address: "Manila",
+        emergency_contact: "Rico Santos",
+        medical_history: "Asthma",
+        status: "Pending",
+      };
+
+      const created = await createPatient(patient);
+      createdPatientIds.push(created.id);
+
+      const result = await deletePatient(createdPatientIds[0]);
+      expect(result).toBeTruthy();
+      expect(result.id).toBe(createdPatientIds[0]);
+    })
+  })
+
+
 });
 
