@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {validateOrder,validateOrderId,fetchOrdersService,addOrderService, editOrderService, removeOrderService} from "../../../src/objective2/services/orderServices.js";
+import { createInventory } from "../../../src/objective2/models/inventoryModels.js";
 
 describe("Order Validation Service", () => {
 
@@ -130,7 +131,6 @@ describe("Order ID Validation Service", () => {
 
   });
 
-
 describe("Fetch Orders Service", () => {
 
   it("should fetch all orders", async () => {
@@ -151,10 +151,24 @@ describe("Add Order Service", () => {
   it("should add a new order", async () => {
 
     // Arrange
+    const lens = await createInventory({
+      name: `Lens ${Date.now()}`,
+      type: "Lens",
+      price: 1500,
+      stock: 10,
+    });
+
+    const frame = await createInventory({
+      name: `Frame ${Date.now()}`,
+      type: "Frame",
+      price: 2000,
+      stock: 10,
+    });
+
     const order = {
-      patientName: `Test Patient ${Date.now()}`,
-      lensName: "Blue Cut Lens",
-      frameName: "Metal Frame",
+      patientName: "Juan Dela Cruz",
+      lensName: lens.name,
+      frameName: frame.name,
     };
 
     // Act
@@ -223,6 +237,113 @@ describe("Add Order Service", () => {
 
   });
 
+  it("should return error when lens is not found", async () => {
+
+    // Arrange
+    const order = {
+      patientName: "Juan Dela Cruz",
+      lensName: "Unknown Lens",
+      frameName: "Metal Frame",
+    };
+
+    // Act
+    const result = await addOrderService(order);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Lens not found.");
+
+  });
+
+  it("should return error when frame is not found", async () => {
+
+    // Arrange
+    const lens = await createInventory({
+      name: `Lens ${Date.now()}`,
+      type: "Lens",
+      price: 1500,
+      stock: 10,
+    });
+
+    const order = {
+      patientName: "Juan Dela Cruz",
+      lensName: lens.name,
+      frameName: "Unknown Frame",
+    };
+
+    // Act
+    const result = await addOrderService(order);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Frame not found.");
+
+  });
+
+  it("should return error when selected lens is out of stock", async () => {
+
+    // Arrange
+    const lens = await createInventory({
+      name: `Lens ${Date.now()}`,
+      type: "Lens",
+      price: 1500,
+      stock: 0,
+    });
+
+    const frame = await createInventory({
+      name: `Frame ${Date.now()}`,
+      type: "Frame",
+      price: 2000,
+      stock: 10,
+    });
+
+    const order = {
+      patientName: "Juan Dela Cruz",
+      lensName: lens.name,
+      frameName: frame.name,
+    };
+
+    // Act
+    const result = await addOrderService(order);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Selected lens is out of stock.");
+
+  });
+
+  it("should return error when selected frame is out of stock", async () => {
+
+    // Arrange
+    const lens = await createInventory({
+      name: `Lens ${Date.now()}`,
+      type: "Lens",
+      price: 1500,
+      stock: 10,
+    });
+
+    const frame = await createInventory({
+      name: `Frame ${Date.now()}`,
+      type: "Frame",
+      price: 2000,
+      stock: 0,
+    });
+
+    const order = {
+      patientName: "Juan Dela Cruz",
+      lensName: lens.name,
+      frameName: frame.name,
+    };
+
+    // Act
+    const result = await addOrderService(order);
+
+    // Assert
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe("Selected frame is out of stock.");
+
+  });
+
 });
 
 describe("Edit Order Service", () => {
@@ -230,26 +351,52 @@ describe("Edit Order Service", () => {
   it("should update an existing order", async () => {
 
     // Arrange
+    const lens = await createInventory({
+      name: `Lens ${Date.now()}`,
+      type: "Lens",
+      price: 1500,
+      stock: 10,
+    });
+
+    const frame = await createInventory({
+      name: `Frame ${Date.now()}`,
+      type: "Frame",
+      price: 2000,
+      stock: 10,
+    });
+
+    const newLens = await createInventory({
+      name: `New Lens ${Date.now()}`,
+      type: "Lens",
+      price: 3000,
+      stock: 10,
+    });
+
+    const newFrame = await createInventory({
+      name: `New Frame ${Date.now()}`,
+      type: "Frame",
+      price: 5000,
+      stock: 10,
+    });
+
     const order = await addOrderService({
       patientName: `Test Patient ${Date.now()}`,
-      lensName: "Blue Cut Lens",
-      frameName: "Metal Frame",
+      lensName: lens.name,
+      frameName: frame.name,
     });
 
     // Act
     const result = await editOrderService(order.data.id, {
       patientName: "Updated Patient",
-      lensName: "Progressive Lens",
-      frameName: "Titanium Frame",
+      lensName: newLens.name,
+      frameName: newFrame.name,
     });
-
     // Assert
     expect(result.valid).toBe(true);
     expect(result.data.id).toBe(order.data.id);
     expect(result.data.patient_name).toBe("Updated Patient");
-    expect(result.data.lens_name).toBe("Progressive Lens");
-    expect(result.data.frame_name).toBe("Titanium Frame");
-
+    expect(result.data.lens_name).toBe(newLens.name);
+    expect(result.data.frame_name).toBe(newFrame.name);
   });
 
   it("should return validation error when order id is missing", async () => {
@@ -304,10 +451,24 @@ describe("Remove Order Service", () => {
   it("should delete an existing order", async () => {
 
     // Arrange
+    const lens = await createInventory({
+      name: `Lens ${Date.now()}`,
+      type: "Lens",
+      price: 1500,
+      stock: 10,
+    });
+
+    const frame = await createInventory({
+      name: `Frame ${Date.now()}`,
+      type: "Frame",
+      price: 2000,
+      stock: 10,
+    });
+
     const order = await addOrderService({
       patientName: `Test Patient ${Date.now()}`,
-      lensName: "Blue Cut Lens",
-      frameName: "Metal Frame",
+      lensName: lens.name,
+      frameName: frame.name,
     });
 
     // Act
