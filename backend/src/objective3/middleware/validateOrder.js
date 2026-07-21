@@ -1,4 +1,4 @@
-import { VALID_STATUSES } from '../models/order.js';
+import { VALID_STATUSES } from '../Models/order.js';
 
 export function validateCreateOrder(req, res, next) {
   const { customerName, items, total } = req.body;
