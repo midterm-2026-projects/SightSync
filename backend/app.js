@@ -14,7 +14,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
 
     res.send("SightSync Backend Running");
-
+    
 });
 app.use("/api/patients", patientRoutes);
 app.use("/api/appointments", appointmentRoutes);
