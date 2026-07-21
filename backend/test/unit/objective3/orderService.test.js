@@ -45,7 +45,7 @@ vi.mock('../../../database/db.js', () => ({
 vi.mock('../../../src/objective3/utils/eventBus.js', () => ({ default: mockEventBus }));
 
 // Direktang inilalagay ang prototype binding sa mismong runtime definition block
-vi.mock('../../../src/objective3/models/order.js', () => {
+vi.mock('../../../src/objective3/Models/order.js', () => {
   class MockOrderModel {
     constructor(db) {}
     create(...args) { return mockOrderModel.create(...args); }

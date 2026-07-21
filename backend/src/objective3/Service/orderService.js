@@ -1,4 +1,4 @@
-import OrderModel from '../models/order.js';
+import OrderModel from '../Models/order.js';
 import eventBus from '../utils/eventBus.js';
 
 class OrderService {

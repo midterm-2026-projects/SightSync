@@ -11,7 +11,7 @@ vi.mock('../../../database/db.js', () => ({
 
 let mockPayments = [];
 
-vi.mock('../../../src/objective3/models/payment.js', () => {
+vi.mock('../../../src/objective3/Models/payment.js', () => {
   return {
     default: class MockPaymentModel {
       constructor(db) {}
@@ -52,7 +52,7 @@ vi.mock('../../../src/objective3/models/payment.js', () => {
 });
 
 // Import ang mocked class
-import PaymentModel from '../../../src/objective3/models/payment.js';
+import PaymentModel from '../../../src/objective3/Models/payment.js';
 
 describe('PaymentModel Integration Tests (PostgreSQL - Mocked)', () => {
   let paymentModel;

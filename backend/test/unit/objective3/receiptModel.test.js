@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 import { ConstraintError } from '../../../src/objective3/middleware/errors.js';
-import ReceiptModel from '../../../src/objective3/models/receipt.js';
-import PaymentModel from '../../../src/objective3/models/payment.js';
+import ReceiptModel from '../../../src/objective3/Models/receipt.js';
+import PaymentModel from '../../../src/objective3/Models/payment.js';
 
 
 vi.mock('../../../database/db.js', () => ({
@@ -12,7 +12,7 @@ vi.mock('../../../database/db.js', () => ({
 let mockPayments = [];
 let mockReceipts = [];
 
-vi.mock('../../../src/objective3/models/payment.js', () => {
+vi.mock('../../../src/objective3/Models/payment.js', () => {
   return {
     default: class MockPaymentModel {
       constructor(db) {}
@@ -34,7 +34,7 @@ vi.mock('../../../src/objective3/models/payment.js', () => {
 });
 
 // 🛠️ I-mock ang ReceiptModel
-vi.mock('../../../src/objective3/models/receipt.js', () => {
+vi.mock('../../../src/objective3/Models/receipt.js', () => {
   return {
     default: class MockReceiptModel {
       constructor(db) {}

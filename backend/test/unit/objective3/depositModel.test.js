@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 import { ConstraintError } from '../../../src/objective3/middleware/errors.js';
-import DepositModel from '../../../src/objective3/models/deposit.js';
+import DepositModel from '../../../src/objective3/Models/deposit.js';
 
 vi.mock('../../../database/db.js', () => ({
   default: {}
@@ -10,7 +10,7 @@ vi.mock('../../../database/db.js', () => ({
 let mockDeposits = [];
 
 
-vi.mock('../../../src/objective3/models/deposit.js', () => {
+vi.mock('../../../src/objective3/Models/deposit.js', () => {
   return {
     default: class MockDepositModel {
       constructor(db) {}

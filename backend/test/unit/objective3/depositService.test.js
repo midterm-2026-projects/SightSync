@@ -40,7 +40,7 @@ vi.mock('../../../database/db.js', () => ({
 }));
 
 // I-inject ang mocks direkta sa prototype ng DepositModel constructor
-vi.mock('../../../src/objective3/models/deposit.js', () => {
+vi.mock('../../../src/objective3/Models/deposit.js', () => {
   class MockDepositModel {
     constructor(db) {
       this.db = db; // Sinusunod ang base constructor assignment[cite: 1]
