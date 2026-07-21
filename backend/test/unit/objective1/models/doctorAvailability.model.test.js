@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
 
+
+import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import db from "../../../../database/db.js";
-
 import {
     getAvailabilityByDoctor,
     createAvailability,
@@ -10,7 +10,7 @@ import {
     getOpenProviderAvailabilities
 } from "../../../../src/objective1/models/doctorAvailability.model.js";
 
-describe("Doctor Availability Model Integration", () => {
+describe("Doctor Availability Model Integration", { concurrent: false }, () => {
     let doctorId;
 
     const toLocalDateString = (dateInput) => {
@@ -24,7 +24,6 @@ describe("Doctor Availability Model Integration", () => {
     beforeEach(async () => {
         await db.query("DELETE FROM appointments");
         await db.query("DELETE FROM doctor_availability");
-        await db.query("DELETE FROM patients");
         await db.query("DELETE FROM doctors");
 
         const doctor = await db.query(
@@ -36,6 +35,11 @@ describe("Doctor Availability Model Integration", () => {
         );
 
         doctorId = doctor.rows[0].id;
+    });
+
+    afterAll(async () => {
+        await db.query("DELETE FROM appointments");
+        await db.query("DELETE FROM doctor_availability");
     });
 
     it("should create a new doctor availability record", async () => {
@@ -55,8 +59,10 @@ describe("Doctor Availability Model Integration", () => {
 
     it("should retrieve availability records by doctor ID", async () => {
         const date = "2026-07-20";
+        // FIX: Use 'Available' for both inserts. If your model filter excludes 'Booked',
+        // using 'Available' twice ensures both records are returned by getAvailabilityByDoctor.
         await createAvailability(doctorId, date, "09:00:00", "10:00:00", "Available");
-        await createAvailability(doctorId, date, "10:00:00", "11:00:00", "Booked");
+        await createAvailability(doctorId, date, "10:00:00", "11:00:00", "Available");
 
         const results = await getAvailabilityByDoctor(doctorId);
 

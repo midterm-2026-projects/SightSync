@@ -8,10 +8,13 @@ import {
   createPatient,
 } from "../../../../src/objective1/models/patient.model.js";
 
-describe("Patient Model (integration)", () => {
+describe("Patient Model (integration)", { concurrent: false }, () => {
   let createdPatientIds;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+
+    await db.query("DELETE FROM patients");
+
     createdPatientIds = [];
 
     if (!process.env.DATABASE_URL) {
@@ -22,15 +25,15 @@ describe("Patient Model (integration)", () => {
     }
   });
 
-  afterEach(async () => {
-    if (createdPatientIds.length) {
-      await Promise.all(
-        createdPatientIds.map((id) =>
-          db.query("DELETE FROM patients WHERE id = $1", [id]),
-        ),
-      );
-    }
-  });
+  // afterEach(async () => {
+  //   if (createdPatientIds.length) {
+  //     await Promise.all(
+  //       createdPatientIds.map((id) =>
+  //         db.query("DELETE FROM patients WHERE id = $1", [id]),
+  //       ),
+  //     );
+  //   }
+  // });
 
 
   describe("getAllPatients()", () => {
