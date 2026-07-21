@@ -7,6 +7,7 @@ export default defineConfig({
     test: {
     include: [
       "test/**/*.test.js"
-    ]
+    ],
+    fileParallelism: false
   }
 });

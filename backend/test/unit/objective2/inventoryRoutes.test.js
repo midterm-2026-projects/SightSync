@@ -11,11 +11,11 @@ vi.mock("../../../src/objective2/models/inventoryModels.js");
 vi.mock("../../../src/objective2/services/inventoryServices.js");
 
 
-describe("GET Inventory Routes", () => {
-
-  beforeEach(() => {
+ beforeEach(() => {
     vi.clearAllMocks();
   });
+
+describe("GET Inventory Routes", () => {
 
   it( "inventory should return inventory", async () => {
 

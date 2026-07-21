@@ -1,10 +1,5 @@
 import express from "express";
-
-import {
-  fetchInventory,
-  addInventory,
-  editInventoryPrice,
-} from "../controllers/inventoryControllers.js";
+import {fetchInventory, addInventory, editInventoryPrice,} from "../controllers/inventoryControllers.js";
 
 const router = express.Router();
 
