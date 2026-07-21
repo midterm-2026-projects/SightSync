@@ -93,10 +93,6 @@ jobs:
     needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: frontend
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -106,16 +102,29 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
 
-      - name: Install dependencies
+      # 1. Install Backend Dependencies (needed for npm run dev in backend)
+      - name: Install backend dependencies
         run: npm ci
+        working-directory: backend
 
+      # 2. Install Frontend Dependencies
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      # 3. Install Playwright Browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
+        working-directory: frontend
 
+      # 4. Run Playwright (automatically boots dev servers via webServer config)
       - name: Run Playwright tests
-        run: npm run test:e2e
+        run: npx playwright test
+        working-directory: frontend
         env:
           NODE_ENV: test
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
