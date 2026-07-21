@@ -10,8 +10,11 @@ import depositRoutes from "./src/objective3/routes/depositRoutes.js";
 import paymentRoutes from "./src/objective3/routes/paymentRoutes.js";
 import receiptRoutes from "./src/objective3/routes/receiptRoutes.js";
 
+import cors from "cors";
+
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 
