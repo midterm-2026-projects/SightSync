@@ -1,23 +1,26 @@
+import { EventEmitter } from "events";
+
+export const notificationEmitter = new EventEmitter();
+
 export const sendAppointmentConfirmation = async (
     appointment
 ) => {
 
     try {
 
-        return {
-
+        const payload = {
             success: true,
-
-            message:
-                "Appointment confirmation sent.",
-
-            appointmentId:
-                appointment.id,
-
-            patientId:
-                appointment.patient_id
-
+            message: "Appointment confirmation sent.",
+            appointmentId: appointment.id,
+            patientId: appointment.patient_id,
+            doctorId: appointment.doctor_id,
+            date: appointment.appointment_date,
+            time: appointment.appointment_time
         };
+
+        notificationEmitter.emit("appointmentConfirmation", payload);
+
+        return payload;
 
     }
     
@@ -32,17 +35,37 @@ export const sendAppointmentConfirmation = async (
 };
 
 export const sendNotification = async (
-    callback
+    callback,
+    timeoutMs = 5000
 ) => {
+
+    if (typeof callback !== "function") {
+        return {
+            success: false,
+            message: "Network service unavailable."
+        };
+    }
+
+    let timeoutId;
+    const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => {
+            reject(new Error("Network request timed out"));
+        }, timeoutMs);
+    });
 
     try {
 
-        return await callback();
+        const result = await Promise.race([
+            callback(),
+            timeoutPromise
+        ]);
+        clearTimeout(timeoutId);
+        return result;
 
     }
 
-    catch {
-
+    catch (error) {
+        clearTimeout(timeoutId);
         return {
 
             success: false,

@@ -14,6 +14,20 @@ vi.mock("../../../../src/objective1/models/patient.model.js", () => ({
     getPatientById: vi.fn()
 }));
 
+// Mock doctor availability service
+vi.mock("../../../../src/objective1/services/doctorAvailability.service.js", () => ({
+    getDoctorAvailability: vi.fn().mockResolvedValue([]),
+    createDoctorAvailability: vi.fn().mockResolvedValue({ id: 1, doctor_id: 1, status: "Booked" }),
+    updateDoctorAvailability: vi.fn(),
+    deleteDoctorAvailability: vi.fn()
+}));
+
+// Mock notification service
+vi.mock("../../../../src/objective1/services/notification.service.js", () => ({
+    sendAppointmentConfirmation: vi.fn().mockResolvedValue({ success: true }),
+    sendNotification: vi.fn()
+}));
+
 import {
     getAllAppointments,
     getAppointmentById,
@@ -23,6 +37,7 @@ import {
 } from "../../../../src/objective1/models/appointment.model.js";
 
 import { getPatientById } from "../../../../src/objective1/models/patient.model.js";
+import { sendAppointmentConfirmation } from "../../../../src/objective1/services/notification.service.js";
 
 import {
     getAllAppointmentsService,
@@ -132,6 +147,7 @@ describe("Appointment Service", () => {
 
             expect(result.status).toBe("Scheduled");
             expect(createAppointment).toHaveBeenCalled();
+            expect(sendAppointmentConfirmation).toHaveBeenCalled();
         });
 
         it("should throw if patient does not exist", async () => {

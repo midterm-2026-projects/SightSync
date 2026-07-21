@@ -141,6 +141,7 @@ describe("Appointment Model Integration", () => {
             };
 
             const result = await createAppointment(appointment);
+            console.log(result);
 
             expect(result.patient_id).toBe(patientId);
             expect(result.doctor_id).toBe(doctorId);

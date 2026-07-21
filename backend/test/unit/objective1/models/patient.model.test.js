@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 
-import db from "../../../database/db.js";
+import db from "../../../../database/db.js";
 
 import {
   getAllPatients,
   getPatientById,
   createPatient,
-} from "../../../src/objective1/models/patient.model.js";
+} from "../../../../src/objective1/models/patient.model.js";
 
 describe("Patient Model (integration)", () => {
   let createdPatientIds;
