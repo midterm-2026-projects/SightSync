@@ -1,4 +1,4 @@
-import { ConstraintError } from '../middleware/errors.js'; // Binago sa lowercase 'errors.js'
+import { ConstraintError } from '../middleware/errors.js';
 
 class PaymentModel {
   constructor(db) {

@@ -1,4 +1,5 @@
 import {getAllOrders, createOrder, updateOrder, deleteOrder,} from "../models/orderModels.js";
+import {findLensByName, findFrameByName, updateStock,} from "../models/inventoryModels.js";
 
 export function validateOrder(data) {
 
@@ -77,7 +78,62 @@ export async function addOrderService(data) {
     return validation;
   }
 
+  // NEW
+
+  // Find Lens
+  const lens = await findLensByName(data.lensName);
+
+  if (!lens) {
+    return {
+      valid: false,
+      message: "Lens not found.",
+    };
+  }
+
+  if (lens.stock <= 0) {
+    return {
+      valid: false,
+      message: "Selected lens is out of stock.",
+    };
+  }
+
+  // NEW
+
+  // Find Frame
+  const frame = await findFrameByName(data.frameName);
+
+  if (!frame) {
+    return {
+      valid: false,
+      message: "Frame not found.",
+    };
+  }
+
+  if (frame.stock <= 0) {
+    return {
+      valid: false,
+      message: "Selected frame is out of stock.",
+    };
+  }
+
+  // NEW
+
+  // Create Order
   const order = await createOrder(data);
+
+  // Update Lens Stock
+  await updateStock(
+    "lenses",
+    lens.id,
+    lens.stock - 1
+  );
+
+  // Update Frame Stock
+  await updateStock(
+    "frames",
+    frame.id,
+    frame.stock - 1
+  );
 
   return {
     valid: true,

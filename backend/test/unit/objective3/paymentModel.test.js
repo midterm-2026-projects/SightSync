@@ -1,31 +1,69 @@
-import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
-import db from '../../../../config/db.js'; 
-import PaymentModel from '../models/payment.js';
-import { ConstraintError } from '../middleware/errors.js';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
-describe('PaymentModel Integration Tests (PostgreSQL)', () => {
+// 🔌 Custom Errors
+import { ConstraintError } from '../../../src/objective3/middleware/errors.js';
+
+
+vi.mock('../../../database/db.js', () => ({
+  default: {}
+}));
+
+
+let mockPayments = [];
+
+vi.mock('../../../src/objective3/Models/payment.js', () => {
+  return {
+    default: class MockPaymentModel {
+      constructor(db) {}
+
+      async create(data) {
+        const newPayment = {
+          id: mockPayments.length + 1,
+          amount: Number(data.amount),
+          payment_date: data.payment_date || new Date().toISOString(),
+          method: data.method || 'cash',
+          status: data.status || 'pending',
+          createdAt: new Date().toISOString()
+        };
+        mockPayments.push(newPayment);
+        return newPayment;
+      }
+
+      async findById(id) {
+        const payment = mockPayments.find(p => Number(p.id) === Number(id));
+        return payment || null;
+      }
+
+      async findAll() {
+        // I-sort gamit ang database ID ascending (1, 2, 3...)
+        return [...mockPayments].sort((a, b) => a.id - b.id);
+      }
+
+      async updateStatus(id, status) {
+        const payment = mockPayments.find(p => Number(p.id) === Number(id));
+        if (!payment) {
+          throw new Error('Payment not found');
+        }
+        payment.status = status;
+        return payment;
+      }
+    }
+  };
+});
+
+// Import ang mocked class
+import PaymentModel from '../../../src/objective3/Models/payment.js';
+
+describe('PaymentModel Integration Tests (PostgreSQL - Mocked)', () => {
   let paymentModel;
 
-  beforeAll(async () => {
-    // Clean up tables once at the beginning
-    try {
-      await db.query('TRUNCATE TABLE payments RESTART IDENTITY CASCADE;');
-    } catch (err) {
-      console.warn('Database cleanup warning during setup:', err.message);
-    }
+  beforeAll(() => {
+    paymentModel = new PaymentModel({});
   });
 
-  beforeEach(() => {
-    paymentModel = new PaymentModel(db);
-  });
-
-  afterEach(async () => {
-    // Isolate the testing space cleanly
-    try {
-      await db.query('TRUNCATE TABLE payments RESTART IDENTITY CASCADE;');
-    } catch (err) {
-      console.warn('Database cleanup warning during suite teardown:', err.message);
-    }
+  beforeEach(async () => {
+    // Linisin ang in-memory data bago ang bawat test run
+    mockPayments = [];
   });
 
   describe('create()', () => {
@@ -94,6 +132,4 @@ describe('PaymentModel Integration Tests (PostgreSQL)', () => {
       expect(updated.status).toBe('completed');
     });
   });
-
-  
 });

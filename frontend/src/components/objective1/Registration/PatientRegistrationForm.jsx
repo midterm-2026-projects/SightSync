@@ -1,7 +1,9 @@
+
 import { useState } from "react";
-import usePatientForm from "../../hooks/usePatientForm";
-import { validatePatientForm } from "../../utils/patientValidation";
-import { mapPatientToPayload } from "../../utils/patientMapper";
+import usePatientForm from "../hooks/usePatientForm";
+import { validatePatientForm } from "../utils/patientValidation";
+import { mapPatientToPayload } from "../utils/patientMapper";
+import { createPatient } from "../api/patientApi";
 
 export default function PatientRegistrationForm() {
   const {
@@ -13,12 +15,16 @@ export default function PatientRegistrationForm() {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+  const [apiError, setApiError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setSuccessMessage("");
+    setApiError("");
 
+    // Client-side validation
     const validation = validatePatientForm(formData);
 
     if (!validation.valid) {
@@ -27,20 +33,23 @@ export default function PatientRegistrationForm() {
     }
 
     setErrors({});
+    setIsSubmitting(true);
 
     const payload = mapPatientToPayload(formData);
 
-    console.log("Patient Registration Payload:");
-    console.log(payload);
-    
+    try {
+      await createPatient(payload);
 
-    setSuccessMessage("Patient registered successfully.");
-
-    resetForm();
+      setSuccessMessage("Patient registered successfully.");
+      resetForm();
+    } catch (err) {
+      setApiError(err.message || "An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <>
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
       <div className="w-full max-w-5xl bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-3xl font-bold mb-2">
@@ -57,15 +66,20 @@ export default function PatientRegistrationForm() {
           </div>
         )}
 
+        {apiError && (
+          <div className="mb-6 rounded-lg border border-red-300 bg-red-100 p-4 text-red-700">
+            {apiError}
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="space-y-8"
           noValidate
         >
-                  {/* ============================
+          {/* ============================
               Personal Information
           ============================ */}
-
           <section>
             <h2 className="text-xl font-semibold mb-4 border-b pb-2">
               Personal Information
@@ -86,13 +100,12 @@ export default function PatientRegistrationForm() {
                   id="firstName"
                   name="firstName"
                   type="text"
-                  value={formData.firstName}
+                  value={formData.firstName || ""}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${
-                    errors.firstName
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.firstName
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 />
 
                 {errors.firstName && (
@@ -115,13 +128,12 @@ export default function PatientRegistrationForm() {
                   id="lastName"
                   name="lastName"
                   type="text"
-                  value={formData.lastName}
+                  value={formData.lastName || ""}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${
-                    errors.lastName
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.lastName
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 />
 
                 {errors.lastName && (
@@ -144,13 +156,12 @@ export default function PatientRegistrationForm() {
                   id="middleName"
                   name="middleName"
                   type="text"
-                  value={formData.middleName}
+                  value={formData.middleName || ""}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${
-                    errors.middleName
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.middleName
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 />
 
                 {errors.middleName && (
@@ -173,13 +184,12 @@ export default function PatientRegistrationForm() {
                   id="birthDate"
                   name="birthDate"
                   type="date"
-                  value={formData.birthDate}
+                  value={formData.birthDate || ""}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${
-                    errors.birthDate
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.birthDate
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 />
 
                 {errors.birthDate && (
@@ -202,7 +212,7 @@ export default function PatientRegistrationForm() {
                   id="age"
                   name="age"
                   type="number"
-                  value={formData.age}
+                  value={formData.age || ""}
                   readOnly
                   className="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2"
                 />
@@ -220,15 +230,12 @@ export default function PatientRegistrationForm() {
                 <select
                   id="sex"
                   name="sex"
-                  value={formData.sex}
-                  onChange={(e) =>
-                    updateField("sex", e.target.value)
-                  }
-                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${
-                    errors.sex
+                  value={formData.sex || ""}
+                  onChange={(e) => updateField("sex", e.target.value)}
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.sex
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 >
                   <option value="">Select Sex</option>
                   <option value="Male">Male</option>
@@ -245,12 +252,42 @@ export default function PatientRegistrationForm() {
                 )}
               </div>
 
+              {/* Patient Status */}
+              <div>
+                <label
+                  htmlFor="status"
+                  className="block mb-2 font-medium"
+                >
+                  Status *
+                </label>
+
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status || "Active"}
+                  onChange={(e) => updateField("status", e.target.value)}
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.status
+                      ? "border-red-500"
+                      : "border-gray-300 focus:border-blue-500"
+                    }`}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+
+                {errors.status && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.status}
+                  </p>
+                )}
+              </div>
+
             </div>
           </section>
-                    {/* ============================
+
+          {/* ============================
               Contact Information
           ============================ */}
-
           <section>
             <h2 className="text-xl font-semibold mb-4 border-b pb-2">
               Contact Information
@@ -272,13 +309,12 @@ export default function PatientRegistrationForm() {
                   name="contactNumber"
                   type="tel"
                   placeholder="09XXXXXXXXX"
-                  value={formData.contactNumber}
+                  value={formData.contactNumber || ""}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${
-                    errors.contactNumber
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.contactNumber
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 />
 
                 {errors.contactNumber && (
@@ -302,13 +338,12 @@ export default function PatientRegistrationForm() {
                   name="email"
                   type="email"
                   placeholder="example@email.com"
-                  value={formData.email}
+                  value={formData.email || ""}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${
-                    errors.email
+                  className={`w-full rounded-lg border px-4 py-2 outline-none transition ${errors.email
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 />
 
                 {errors.email && (
@@ -332,13 +367,12 @@ export default function PatientRegistrationForm() {
                   name="address"
                   rows={4}
                   placeholder="Enter complete address..."
-                  value={formData.address}
+                  value={formData.address || ""}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border px-4 py-2 outline-none resize-none transition ${
-                    errors.address
+                  className={`w-full rounded-lg border px-4 py-2 outline-none resize-none transition ${errors.address
                       ? "border-red-500"
                       : "border-gray-300 focus:border-blue-500"
-                  }`}
+                    }`}
                 />
 
                 {errors.address && (
@@ -350,10 +384,10 @@ export default function PatientRegistrationForm() {
 
             </div>
           </section>
-                    {/* ============================
+
+          {/* ============================
               Emergency & Medical Information
           ============================ */}
-
           <section>
             <h2 className="text-xl font-semibold mb-4 border-b pb-2">
               Emergency & Medical Information
@@ -375,7 +409,7 @@ export default function PatientRegistrationForm() {
                   name="emergencyContact"
                   type="text"
                   placeholder="Enter emergency contact person"
-                  value={formData.emergencyContact}
+                  value={formData.emergencyContact || ""}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition focus:border-blue-500"
                 />
@@ -395,7 +429,7 @@ export default function PatientRegistrationForm() {
                   name="medicalHistory"
                   rows={5}
                   placeholder="Enter relevant medical history..."
-                  value={formData.medicalHistory}
+                  value={formData.medicalHistory || ""}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none resize-none transition focus:border-blue-500"
                 />
@@ -407,26 +441,28 @@ export default function PatientRegistrationForm() {
           {/* ============================
               Action Buttons
           ============================ */}
-
           <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t">
 
             <button
               type="button"
+              disabled={isSubmitting}
               onClick={() => {
                 resetForm();
                 setErrors({});
                 setSuccessMessage("");
+                setApiError("");
               }}
-              className="px-6 py-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+              className="px-6 py-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition disabled:opacity-50"
             >
               Reset
             </button>
 
             <button
               type="submit"
-              className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+              disabled={isSubmitting}
+              className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition disabled:bg-blue-400 flex items-center justify-center gap-2"
             >
-              Register Patient
+              {isSubmitting ? "Registering..." : "Register Patient"}
             </button>
 
           </div>
@@ -434,6 +470,5 @@ export default function PatientRegistrationForm() {
         </form>
       </div>
     </div>
-    </>
   );
 }

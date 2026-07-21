@@ -43,6 +43,8 @@ export const updateAppointmentController = async (req, res) => {
         const appointment = await updateAppointmentService(id, req.body);
         res.status(200).json({ success: true, data: appointment });
     } catch (error) {
+
+        console.log(error)
         res.status(500).json({ success: false, error: error.message });
     }
 };

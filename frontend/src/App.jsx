@@ -1,11 +1,9 @@
-import AppLayout from './components/Management/AppLayout.jsx';
-import AppObjective3 from './components/objective3/AppReceipt/AppObjective3.jsx';
+import AppLayout from './components/AppLayout.jsx';
 
 export default function App() {
   return (
     <>
     <AppLayout/>
-    <AppObjective3/>
     </>
   );
 }
