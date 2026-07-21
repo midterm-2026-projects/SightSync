@@ -1,4 +1,4 @@
-import DepositModel from "../models/deposit.js";
+import DepositModel from "../Models/deposit.js";
 import { ConstraintError } from "../middleware/errors.js";
 
 // Kung ang DepositModel constructor ay nangangailangan ng db,
