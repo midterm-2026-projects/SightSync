@@ -8,7 +8,7 @@ import PatientRegistrationForm from './objective1/Registration/PatientRegistrati
 import AppointmentManager from './objective1/Appointments/AppointmentManager';
 import AppObjective3 from './objective3/AppReceipt/AppObjective3.jsx';
 import Dashboard from "./objective1/Dashboard/Dashboard.jsx"
-import PredictionDashboard from "../objective2/PredictionDashboard";
+import PredictionDashboard from "./objective2/PredictionDashboard";
 
 export default function AppLayout({ children }) {
   const [activeTab, setActiveTab] = useState('dashboard');
