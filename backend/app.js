@@ -6,9 +6,11 @@ import doctorAvailabilityRoutes from "./src/objective1/routes/doctorAvailability
 import orderRoutes from "./src/objective2/routes/order.js";
 import predictionRoutes from "./src/objective2/routes/prediction.js";
 import summaryRoutes from "./src/objective1/routes/summary.routes.js";
+import cors from "cors";
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 

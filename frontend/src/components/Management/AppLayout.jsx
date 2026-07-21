@@ -3,6 +3,7 @@ import InventoryForm from '../objective2/InventoryForm';
 import InventoryTable from '../objective2/InventoryTable';
 import PatientDirectoryView from './PatientDirectoryView';
 import PatientRegistrationForm from '../Registration/PatientRegistrationForm';
+import PredictionDashboard from "../objective2/PredictionDashboard";
 
 export default function AppLayout({ children }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -44,6 +45,10 @@ export default function AppLayout({ children }) {
             <p className="mt-2 text-sm text-gray-500">Appointment workflows will be mounted here in the upcoming sprint.</p>
           </div>
         );
+
+      case "prediction":
+          return <PredictionDashboard />;
+        
       case 'dashboard':
       default:
         return (
@@ -88,6 +93,11 @@ export default function AppLayout({ children }) {
             <li>
               <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('appointments')}>
                 Appointment Schedules (W4)
+              </button>
+            </li>
+            <li>
+              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('prediction')}>
+                Prediction Dashboard
               </button>
             </li>
           </ul>
