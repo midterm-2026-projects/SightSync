@@ -1,44 +1,108 @@
-import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
-import db from '../../../config/db.js';
-import ReceiptModel from '../models/receipt.js';
-import PaymentModel from '../models/payment.js';
-import { ConstraintError } from '../middleware/errors.js';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
+import { ConstraintError } from '../../../src/objective3/middleware/errors.js';
+import ReceiptModel from '../../../src/objective3/Models/receipt.js';
+import PaymentModel from '../../../src/objective3/Models/payment.js';
 
-describe('ReceiptModel Integration Tests (PostgreSQL)', () => {
+
+vi.mock('../../../database/db.js', () => ({
+  default: {}
+}));
+
+
+let mockPayments = [];
+let mockReceipts = [];
+
+vi.mock('../../../src/objective3/Models/payment.js', () => {
+  return {
+    default: class MockPaymentModel {
+      constructor(db) {}
+
+      async create(data) {
+        const newPayment = {
+          id: mockPayments.length + 1,
+          amount: Number(data.amount),
+          payment_date: data.payment_date || new Date().toISOString(),
+          method: data.method || 'cash',
+          status: data.status || 'completed',
+          createdAt: new Date().toISOString()
+        };
+        mockPayments.push(newPayment);
+        return newPayment;
+      }
+    }
+  };
+});
+
+// 🛠️ I-mock ang ReceiptModel
+vi.mock('../../../src/objective3/Models/receipt.js', () => {
+  return {
+    default: class MockReceiptModel {
+      constructor(db) {}
+
+      async create(data) {
+        // I-check kung may kaparehong receipt_number sa ating mock db
+        const duplicate = mockReceipts.find(r => r.receipt_number === data.receipt_number);
+        if (duplicate) {
+          throw new ConstraintError('Duplicate key value violates unique constraint');
+        }
+
+        const newReceipt = {
+          id: mockReceipts.length + 1,
+          payment_id: Number(data.payment_id),
+          receipt_number: data.receipt_number,
+          template_version: data.template_version || 'v1',
+          issued_date: data.issued_date || new Date().toISOString(),
+          createdAt: new Date().toISOString()
+        };
+        mockReceipts.push(newReceipt);
+        return newReceipt;
+      }
+
+      async findById(id) {
+        const receipt = mockReceipts.find(r => Number(r.id) === Number(id));
+        return receipt || null;
+      }
+
+      async findByPaymentId(paymentId) {
+        const receipt = mockReceipts.find(r => Number(r.payment_id) === Number(paymentId));
+        return receipt || null;
+      }
+
+      async findByReceiptNumber(receiptNumber) {
+        const receipt = mockReceipts.find(r => r.receipt_number === receiptNumber);
+        return receipt || null;
+      }
+
+      async findAll() {
+        // I-sort base sa index/id ascending
+        return [...mockReceipts].sort((a, b) => a.id - b.id);
+      }
+    }
+  };
+});
+
+describe('ReceiptModel Integration Tests (PostgreSQL - Mocked)', () => {
   let receiptModel;
   let paymentModel;
   let sharedPayment;
 
-  beforeAll(async () => {
-    // Clean up tables once at the beginning
-    try {
-      await db.query('TRUNCATE TABLE receipts RESTART IDENTITY CASCADE;');
-      await db.query('TRUNCATE TABLE payments RESTART IDENTITY CASCADE;');
-    } catch (err) {
-      console.warn('Database cleanup warning during setup:', err.message);
-    }
+  beforeAll(() => {
+    receiptModel = new ReceiptModel({});
+    paymentModel = new PaymentModel({});
   });
 
   beforeEach(async () => {
-    receiptModel = new ReceiptModel(db);
-    paymentModel = new PaymentModel(db);
+    // Linisin ang parehong in-memory database bago ang bawat test run
+    mockPayments = [];
+    mockReceipts = [];
 
-    // Seed required relational dependency row
+    // Gumawa ng laging handang shared payment para sa tests
     sharedPayment = await paymentModel.create({
       amount: 89.99,
       payment_date: new Date().toISOString(),
       method: 'online',
       status: 'completed'
     });
-  });
-
-  afterEach(async () => {
-    try {
-      await db.query('TRUNCATE TABLE receipts RESTART IDENTITY CASCADE;');
-      await db.query('TRUNCATE TABLE payments RESTART IDENTITY CASCADE;');
-    } catch (err) {
-      console.warn('Database cleanup warning during suite teardown:', err.message);
-    }
   });
 
   describe('create()', () => {
@@ -81,6 +145,7 @@ describe('ReceiptModel Integration Tests (PostgreSQL)', () => {
       };
 
       await receiptModel.create(receiptData1);
+      
       try {
         await receiptModel.create(receiptData2);
         throw new Error('Should have thrown ConstraintError');

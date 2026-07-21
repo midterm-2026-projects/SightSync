@@ -1,0 +1,197 @@
+/*
+  Notification UI styles (Objective 3)
+
+  Hooks used by components:
+  - NotificationInterface.jsx:
+      .ni-eyebrow, .ni-title, .ni-filters, .ni-filter, .ni-empty, .ni-timeline, .ni-simulate
+  - NotificationCard.jsx:
+      .ni-card, .ni-type, .ni-message, .ni-time, [data-newest="true"]
+
+  Inline variable:
+  - --dot-color is set per-card from NotificationTypes
+*/
+
+:root {
+  --ni-bg: #0b1220;
+  --ni-surface: rgba(255, 255, 255, 0.06);
+  --ni-surface-2: rgba(255, 255, 255, 0.08);
+  --ni-text: rgba(255, 255, 255, 0.92);
+  --ni-muted: rgba(255, 255, 255, 0.62);
+  --ni-border: rgba(255, 255, 255, 0.14);
+  --ni-shadow: 0 14px 45px rgba(0, 0, 0, 0.35);
+  --ni-ring: rgba(255, 255, 255, 0.20);
+  --ni-radius: 16px;
+}
+
+/* Layout wrapper (NotificationInterface root div) */
+.ni-eyebrow {
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ni-muted);
+}
+
+.ni-title {
+  margin: 0 0 16px;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--ni-text);
+  font-weight: 780;
+}
+
+.ni-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 22px;
+}
+
+.ni-filter {
+  appearance: none;
+  border: 1px solid var(--ni-border);
+  background: transparent;
+  color: var(--ni-text);
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.ni-filter:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.ni-filter[data-active="true"] {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+}
+
+.ni-empty {
+  color: var(--ni-muted);
+  padding: 26px 14px;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: var(--ni-radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Vertical timeline */
+.ni-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+/* Center line */
+.ni-timeline::before {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.28),
+    rgba(255, 255, 255, 0.12)
+  );
+}
+
+.ni-card {
+  --dot-color: #8b8f99;
+
+  position: relative;
+  margin-left: 10px;
+  padding: 14px 16px 14px 54px;
+  border-radius: var(--ni-radius);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.035)
+  );
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.18);
+}
+
+/* Dot */
+.ni-card::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 24px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--dot-color);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+.ni-type {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 720;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.ni-message {
+  margin: 6px 0 10px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.35;
+}
+
+.ni-time {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Newest accent */
+.ni-card[data-newest="true"] {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.11),
+    rgba(255, 255, 255, 0.045)
+  );
+  box-shadow: var(--ni-shadow);
+}
+
+.ni-card[data-newest="true"]::before {
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.10),
+    0 0 0 10px rgba(255, 255, 255, 0.04),
+    0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.ni-simulate {
+  margin-top: 18px;
+  align-self: flex-start;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ni-text);
+  padding: 12px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 650;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.ni-simulate:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+
+.ni-simulate:active {
+  transform: translateY(0px);
+}
+
