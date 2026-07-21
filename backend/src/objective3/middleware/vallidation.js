@@ -1,5 +1,14 @@
+import { VALID_STATUSES } from '../models/Order.js';
+
+// ==========================================
+// 📌 CONSTANTS
+// ==========================================
 const VALID_METHODS = ['cash', 'card', 'bank_transfer', 'online'];
 const VALID_PAYMENT_STATUSES = ['pending', 'completed', 'failed', 'refunded'];
+
+// ==========================================
+// 📌 UTILITY FUNCTIONS
+// ==========================================
 
 /**
  * Returns true if `value` parses to a real calendar date (rejects things like
@@ -31,15 +40,13 @@ function isValidDate(value) {
   );
 }
 
+// ==========================================
+// 📌 CORE VALIDATORS
+// ==========================================
+
 /**
  * Validates a payment (or deposit) form payload.
  * Enforces the three acceptance-criteria rules: amount > 0, valid date, required customer ID.
- *
- * @param {object} payload
- * @param {object} [opts]
- * @param {boolean} [opts.requireMethod=false]
- * @param {string} [opts.dateField='payment_date']
- * @returns {{ valid: boolean, errors: string[] }}
  */
 function validateTransactionForm(payload, opts = {}) {
   const { requireMethod = false, dateField = 'payment_date' } = opts;
@@ -94,6 +101,41 @@ function validateDepositForm(payload) {
   return validateTransactionForm(payload, { requireMethod: false, dateField: 'deposit_date' });
 }
 
+// ==========================================
+// 📌 EXPRESS MIDDLEWARES
+// ==========================================
+
+function validateCreateOrder(req, res, next) {
+  const { customerName, items, total } = req.body;
+
+  if (!customerName || typeof customerName !== 'string') {
+    return res.status(400).json({ error: 'customerName is required and must be a string' });
+  }
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'items is required and must be a non-empty array' });
+  }
+  if (typeof total !== 'number' || total < 0) {
+    return res.status(400).json({ error: 'total is required and must be a non-negative number' });
+  }
+
+  next();
+}
+
+function validateStatusUpdate(req, res, next) {
+  const { status } = req.body;
+
+  if (!status || typeof status !== 'string') {
+    return res.status(400).json({ error: 'status is required and must be a string' });
+  }
+  if (!VALID_STATUSES.includes(status)) {
+    return res.status(400).json({
+      error: `status must be one of: ${VALID_STATUSES.join(', ')}`,
+    });
+  }
+
+  next();
+}
+
 /** Express middleware wrapper - responds 400 with error list on failure. */
 function makeFormValidationMiddleware(validatorFn) {
   return (req, res, next) => {
@@ -105,12 +147,16 @@ function makeFormValidationMiddleware(validatorFn) {
   };
 }
 
-// Named exports block para sa ES Modules
+// ==========================================
+// 📌 EXPORTS
+// ==========================================
 export {
   isValidDate,
   validateTransactionForm,
   validatePaymentForm,
   validateDepositForm,
+  validateCreateOrder,
+  validateStatusUpdate,
   makeFormValidationMiddleware,
   VALID_METHODS,
   VALID_PAYMENT_STATUSES,
