@@ -1,7 +1,8 @@
 import { ConstraintError } from '../middleware/errors.js';
+import pool from '../../../database/db.js';
 
 class ReceiptModel {
-  constructor(db) {
+  constructor(db = pool) {
     this.db = db;
   }
 

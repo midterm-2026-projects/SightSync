@@ -1,8 +1,9 @@
 import OrderModel from '../Models/order.js';
 import eventBus from '../utils/eventBus.js';
+import pool from '../../../database/db.js';
 
 class OrderService {
-  constructor(db) {
+  constructor(db = pool) {
     this.orderModel = new OrderModel(db);
   }
 
@@ -46,6 +47,6 @@ class OrderService {
 
 // I-instantiate gamit ang dummy db instance para gumana ang default export sa test context proxy
 const defaultDb = {}; 
-const orderServiceInstance = new OrderService(defaultDb);
+const orderServiceInstance = new OrderService();
 
 export default orderServiceInstance;
