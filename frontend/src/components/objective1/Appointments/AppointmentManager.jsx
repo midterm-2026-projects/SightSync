@@ -8,8 +8,32 @@ import {
   deleteAppointment,
 } from '../services/appointmentService';
 
+// Assuming you have or can create these service calls to fetch lists
+// If they are in another file, import them accordingly:
+// import { getAllPatients } from '../services/patientService';
+// import { getAllDoctors } from '../services/doctorService';
+
+const API_BASE_URL = 'http://localhost:5000/api';
+
+// Fallback fetch helpers if services aren't in a separate file yet
+const getAllPatients = async () => {
+  const res = await fetch(`${API_BASE_URL}/patients`);
+  if (!res.ok) throw new Error('Failed to fetch patients');
+  const data = await res.json();
+  return Array.isArray(data) ? data : data.data || [];
+};
+
+const getAllDoctors = async () => {
+  const res = await fetch(`${API_BASE_URL}/doctors`);
+  if (!res.ok) throw new Error('Failed to fetch doctors');
+  const data = await res.json();
+  return Array.isArray(data) ? data : data.data || [];
+};
+
 export default function AppointmentManager() {
   const [appointments, setAppointments] = useState([]);
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,13 +50,21 @@ export default function AppointmentManager() {
     status: 'Scheduled',
   });
 
-  // Fetch all appointments on load
-  const loadAppointments = async () => {
+  // Fetch appointments, patients, and doctors on component load
+  const loadInitialData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getAllAppointments();
-      setAppointments(Array.isArray(data) ? data : data.data || []);
+
+      const [appointmentsData, patientsData, doctorsData] = await Promise.all([
+        getAllAppointments(),
+        getAllPatients(),
+        getAllDoctors(),
+      ]);
+
+      setAppointments(Array.isArray(appointmentsData) ? appointmentsData : appointmentsData.data || []);
+      setPatients(patientsData);
+      setDoctors(doctorsData);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -40,8 +72,17 @@ export default function AppointmentManager() {
     }
   };
 
+  const loadAppointments = async () => {
+    try {
+      const data = await getAllAppointments();
+      setAppointments(Array.isArray(data) ? data : data.data || []);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   useEffect(() => {
-    loadAppointments();
+    loadInitialData();
   }, []);
 
   // Helper to format ISO date strings for <input type="date">
@@ -74,7 +115,6 @@ export default function AppointmentManager() {
     setError(null);
     setEditingId(appointment.id);
 
-    // Populate inputs immediately with the current row data
     setFormData({
       patient_id: appointment.patient_id || '',
       doctor_id: appointment.doctor_id || '',
@@ -177,37 +217,46 @@ export default function AppointmentManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {appointments.map((apt) => (
-                  <tr key={apt.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs text-slate-400">#{apt.id}</td>
-                    <td className="px-6 py-4">
-                      <div className="font-medium text-slate-900">Patient #{apt.patient_id}</div>
-                      <div className="text-xs text-slate-400">Doctor #{apt.doctor_id}</div>
-                    </td>
-                    <td className="px-6 py-4 font-medium text-slate-700">{apt.appointment_type || 'General'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {apt.appointment_date ? new Date(apt.appointment_date).toLocaleDateString() : 'N/A'}
-                      <span className="block text-xs text-slate-400">{apt.appointment_time}</span>
-                    </td>
-                    <td className="px-6 py-4 max-w-xs truncate">{apt.reason || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(apt.status)}</td>
-                    <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                      <button
-                        onClick={() => handleOpenEditModal(apt)}
-                        className="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded hover:bg-indigo-50 transition-colors"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(apt.id)}
-                        className="text-rose-600 hover:text-rose-900 font-medium text-xs px-2.5 py-1.5 rounded hover:bg-rose-50 transition-colors"
-                        name="Delete"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {appointments.map((apt) => {
+                  const patient = patients.find((p) => p.id === apt.patient_id);
+                  const doctor = doctors.find((d) => d.id === apt.doctor_id);
+
+                  return (
+                    <tr key={apt.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="px-6 py-4 font-mono text-xs text-slate-400">#{apt.id}</td>
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-slate-900">
+                          {patient ? `${patient.name || patient.first_name + ' ' + patient.last_name}` : `Patient #${apt.patient_id}`}
+                        </div>
+                        <div className="text-xs text-slate-400">
+                          {doctor ? `Dr. ${doctor.name || doctor.first_name + ' ' + doctor.last_name}` : `Doctor #${apt.doctor_id}`}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 font-medium text-slate-700">{apt.appointment_type || 'General'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {apt.appointment_date ? new Date(apt.appointment_date).toLocaleDateString() : 'N/A'}
+                        <span className="block text-xs text-slate-400">{apt.appointment_time}</span>
+                      </td>
+                      <td className="px-6 py-4 max-w-xs truncate">{apt.reason || 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(apt.status)}</td>
+                      <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
+                        <button
+                          onClick={() => handleOpenEditModal(apt)}
+                          className="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded hover:bg-indigo-50 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(apt.id)}
+                          className="text-rose-600 hover:text-rose-900 font-medium text-xs px-2.5 py-1.5 rounded hover:bg-rose-50 transition-colors"
+                          name="Delete"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -232,29 +281,42 @@ export default function AppointmentManager() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
+                {/* Patient Dropdown */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Patient ID</label>
-                  <input
-                    type="number"
+                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Patient</label>
+                  <select
                     required
                     value={formData.patient_id}
                     onChange={(e) => setFormData({ ...formData, patient_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="e.g. 12"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     name="patient_id"
-                  />
+                  >
+                    <option value="" disabled>Select patient...</option>
+                    {patients.map((patient) => (
+                      <option key={patient.id} value={patient.id}>
+                        {patient.name || `${patient.first_name} ${patient.last_name}`} (ID: {patient.id})
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* Doctor Dropdown */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Doctor ID</label>
-                  <input
-                    type="number"
+                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Doctor</label>
+                  <select
                     required
                     value={formData.doctor_id}
                     onChange={(e) => setFormData({ ...formData, doctor_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="e.g. 5"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     name="doctor_id"
-                  />
+                  >
+                    <option value="" disabled>Select doctor...</option>
+                    {doctors.map((doctor) => (
+                      <option key={doctor.id} value={doctor.id}>
+                        Dr. {doctor.name || `${doctor.first_name} ${doctor.last_name}`}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

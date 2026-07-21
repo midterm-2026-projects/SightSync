@@ -7,7 +7,7 @@ import PatientDirectoryView from './objective1/Management/PatientDirectoryView';
 import PatientRegistrationForm from './objective1/Registration/PatientRegistrationForm';
 import AppointmentManager from './objective1/Appointments/AppointmentManager';
 import AppObjective3 from './objective3/AppReceipt/AppObjective3.jsx';
-
+import Dashboard from "./objective1/Dashboard/Dashboard.jsx"
 
 
 export default function AppLayout({ children }) {
@@ -52,10 +52,7 @@ export default function AppLayout({ children }) {
       case 'dashboard':
       default:
         return (
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Dashboard Overview</h2>
-            <p className="mt-2 text-sm text-gray-500">System initialized successfully. Core functional architecture is now mounted through the shared layout.</p>
-          </div>
+          <Dashboard />
         );
     }
   };
