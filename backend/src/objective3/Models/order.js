@@ -1,10 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ConstraintError } from '../middleware/errors.js';
+import pool from '../../../database/db.js';
 
 const VALID_STATUSES = ['pending', 'processing', 'completed'];
 
 class OrderModel {
-  constructor(db) {
+  constructor(db = pool) {
     this.db = db;
   }
 
@@ -19,7 +20,7 @@ class OrderModel {
       const now = new Date().toISOString();
 
       const query = `
-        INSERT INTO orders (id, customer_name, items, total, status, created_at, updated_at)
+        INSERT INTO payments (id, customer_name, items, total, status, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING 
           id, 
