@@ -1,4 +1,4 @@
-import { ConstraintError } from './errors.js';
+import { ConstraintError } from '../middleware/errors.js';
 
 class PaymentService { 
   constructor(db) {
@@ -50,4 +50,4 @@ class PaymentService {
   }
 }
 
-export default PaymentModel;
+export default PaymentService;

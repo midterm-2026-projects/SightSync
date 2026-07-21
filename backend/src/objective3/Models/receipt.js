@@ -15,7 +15,9 @@ class ReceiptModel {
       const res = await this.db.query(query, [payment_id, receipt_number, template_version, issued_date]);
       return res.rows[0];
     } catch (err) {
-      throw new ConstraintError(`Failed to create receipt: ${err.message}`, err);
+      const error = new ConstraintError(`Failed to create receipt: ${err.message}`, err);
+      error.name = 'ConstraintError';
+      throw error;
     }
   }
 
@@ -50,7 +52,9 @@ class ReceiptModel {
       const res = await this.db.query(query, [template_version, issued_date, id]);
       return res.rows[0] || null;
     } catch (err) {
-      throw new ConstraintError(`Failed to update receipt: ${err.message}`, err);
+      const error = new ConstraintError(`Failed to update receipt: ${err.message}`, err);
+      error.name = 'ConstraintError';
+      throw error;
     }
   }
 

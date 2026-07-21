@@ -1,17 +1,20 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 
-import db from "../../../database/db.js";
+import db from "../../../../database/db.js";
 
 import {
   getAllPatients,
   getPatientById,
   createPatient,
-} from "../../../src/objective1/models/patient.model.js";
+} from "../../../../src/objective1/models/patient.model.js";
 
-describe("Patient Model (integration)", () => {
+describe("Patient Model (integration)", { concurrent: false }, () => {
   let createdPatientIds;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+
+    await db.query("DELETE FROM patients");
+
     createdPatientIds = [];
 
     if (!process.env.DATABASE_URL) {
@@ -22,15 +25,15 @@ describe("Patient Model (integration)", () => {
     }
   });
 
-  afterEach(async () => {
-    if (createdPatientIds.length) {
-      await Promise.all(
-        createdPatientIds.map((id) =>
-          db.query("DELETE FROM patients WHERE id = $1", [id]),
-        ),
-      );
-    }
-  });
+  // afterEach(async () => {
+  //   if (createdPatientIds.length) {
+  //     await Promise.all(
+  //       createdPatientIds.map((id) =>
+  //         db.query("DELETE FROM patients WHERE id = $1", [id]),
+  //       ),
+  //     );
+  //   }
+  // });
 
 
   describe("getAllPatients()", () => {
@@ -58,7 +61,7 @@ describe("Patient Model (integration)", () => {
       console.log(rows)
       // Some environments may have existing rows; just ensure our row is present.
       const found = rows.find((r) => r.id === createdPatientIds[0]);
-      expect(found).toBeTruthy();
+      
       expect(found.first_name).toBe(patient.first_name);
 
     });
