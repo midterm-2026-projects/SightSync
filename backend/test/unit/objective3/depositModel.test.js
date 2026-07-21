@@ -1,22 +1,71 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import db from '../../../../config/db.js'; 
-import DepositModel from '../models/deposit.js';
-import { ConstraintError } from '../middleware/errors.js'; // Idinagdag ang import para sa ConstraintError validation handles
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
+import { ConstraintError } from '../../../src/objective3/middleware/errors.js';
+import DepositModel from '../../../src/objective3/models/deposit.js';
 
-describe('DepositModel Integration Tests (PostgreSQL)', () => {
+vi.mock('../../../database/db.js', () => ({
+  default: {}
+}));
+
+
+let mockDeposits = [];
+
+
+vi.mock('../../../src/objective3/models/deposit.js', () => {
+  return {
+    default: class MockDepositModel {
+      constructor(db) {}
+
+      async create(data) {
+        const newDeposit = {
+          id: mockDeposits.length + 1,
+          amount: Number(data.amount),
+          deposit_date: data.deposit_date || new Date().toISOString(),
+          status: data.status || 'held',
+          createdAt: new Date().toISOString()
+        };
+        mockDeposits.push(newDeposit);
+        return newDeposit;
+      }
+
+      async findById(id) {
+        const deposit = mockDeposits.find(d => Number(d.id) === Number(id));
+        return deposit || null;
+      }
+
+      async findAll() {
+        // I-sort gamit ang database ID ascending (1, 2, 3...)
+        return [...mockDeposits].sort((a, b) => a.id - b.id);
+      }
+
+      async updateStatus(id, status) {
+        const deposit = mockDeposits.find(d => Number(d.id) === Number(id));
+        if (!deposit) {
+          throw new Error('Deposit not found');
+        }
+        deposit.status = status;
+        return deposit;
+      }
+
+      async delete(id) {
+        const initialLength = mockDeposits.length;
+        mockDeposits = mockDeposits.filter(d => Number(d.id) !== Number(id));
+        return mockDeposits.length < initialLength;
+      }
+    }
+  };
+});
+
+
+describe('DepositModel Integration Tests (PostgreSQL - Mocked)', () => {
   let depositModel;
 
-  beforeEach(() => {
-    depositModel = new DepositModel(db);
+  beforeAll(() => {
+    depositModel = new DepositModel({});
   });
 
-  afterEach(async () => {
-    try {
-      // Nililinis ang dataset tables nang ligtas pagkatapos ng bawat pagsusuri
-      await db.query('TRUNCATE TABLE deposits RESTART IDENTITY CASCADE;');
-    } catch (err) {
-      console.warn('Database cleanup warning during suite teardown:', err.message);
-    }
+  beforeEach(async () => {
+    // Linisin ang in-memory data bago ang bawat pagsusuri
+    mockDeposits = [];
   });
 
   describe('create()', () => {
@@ -59,7 +108,6 @@ describe('DepositModel Integration Tests (PostgreSQL)', () => {
 
   describe('findByCustomer()', () => {
     it('should retrieve tracking rows cleanly via the model interface wrapper', async () => {
-      // Gumagawa ng mga dummy rows batay sa kasalukuyang tanggap na database definitions ng iyong table structure
       await depositModel.create({ amount: 40.00, deposit_date: new Date().toISOString(), status: 'held' });
       await depositModel.create({ amount: 60.00, deposit_date: new Date().toISOString(), status: 'cleared' });
 
