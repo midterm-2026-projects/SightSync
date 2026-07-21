@@ -186,24 +186,30 @@ Implement Order Status Notifications
 
 ---
 
-## Week 5
+# Week 5
 
-### Day 1
+## Day 1
 
-#### Task Description
-Integrate Notification and Communication Features
+### Task Description
+Implement Stakeholder Communication and Messaging Features
 
-#### Sub-Tasks
-- Connect notification system with order records
-- Test stakeholder updates
+### Sub-Tasks
+*   Create a messaging/comment schema linked to order records for stakeholder communication.
+*   Implement role-based access control for message visibility (e.g., internal staff notes vs. customer-facing messages).
+*   Integrate messaging APIs with the order details user interface.
 
-#### Deliverable(s)
-- notification system with order records
-- stakeholder updates
+---
 
-#### Test Suite / PR Acceptance Criteria
-- It should be ensured that notifications are automatically generated when an order status changes in the system.
-- It should be verified that all stakeholders admin, customer, staff receive correct updates based on their role permissions.
+### Deliverable(s)
+*   Order-linked communication/comment system.
+*   Role-scoped messaging endpoints.
+
+---
+
+### Test Suite / PR Acceptance Criteria
+*   It should be ensured that customers, staff, and admins can post and read messages directly tied to a specific order record.
+*   It should be verified that internal staff notes/comments are completely hidden from the customer role permissions.
+*   It should be verified that a user cannot post or read messages for an order they do not own or have explicit permissions to access.
 
 ---
 

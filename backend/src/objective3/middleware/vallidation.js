@@ -1,4 +1,4 @@
-import { VALID_STATUSES } from '../models/Order.js';
+import { VALID_STATUSES } from '../Models/order.js';
 
 // ==========================================
 // 📌 CONSTANTS
@@ -98,7 +98,32 @@ function validatePaymentForm(payload) {
 }
 
 function validateDepositForm(payload) {
-  return validateTransactionForm(payload, { requireMethod: false, dateField: 'deposit_date' });
+  const errors = [];
+
+  if (!payload || typeof payload !== 'object') {
+    return { valid: false, errors: ['Request body is required.'] };
+  }
+
+  const { amount } = payload;
+  const dateValue = payload['deposit_date'];
+
+  // amount > 0
+  if (amount === undefined || amount === null || amount === '') {
+    errors.push('amount is required.');
+  } else if (typeof amount === 'boolean' || Number.isNaN(Number(amount))) {
+    errors.push('amount must be a number.');
+  } else if (Number(amount) <= 0) {
+    errors.push('amount must be greater than 0.');
+  }
+
+  // valid deposit_date
+  if (dateValue === undefined || dateValue === null || dateValue === '') {
+    errors.push('deposit_date is required.');
+  } else if (!isValidDate(dateValue)) {
+    errors.push('deposit_date must be a valid date (YYYY-MM-DD).');
+  }
+
+  return { valid: errors.length === 0, errors };
 }
 
 // ==========================================

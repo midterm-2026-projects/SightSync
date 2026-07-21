@@ -1,30 +1,45 @@
-export async function createPayment(payload) {
-  return {
-    id: "pay-001",
-    ...payload,
-    status: "pending",
-  };
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+
+/**
+ * Helper to handle fetch responses and throw structured errors
+ */
+async function handleResponse(response) {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
+  }
+  return response.json();
 }
 
+/**
+ * Create a pending payment record
+ * @param {Object} paymentData - { patient_name, doctor_name, amount, method }
+ * @returns {Promise<Object>} Created payment object with generated ID
+ */
+export async function createPayment(paymentData) {
+  const response = await fetch(`${BASE_URL}/payments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(paymentData),
+  });
+  
+  return handleResponse(response);
+}
+
+/**
+ * Confirm a pending payment by its ID
+ * @param {string|number} paymentId 
+ * @returns {Promise<Object>} Object containing the payment status and baseline receipt data
+ */
 export async function confirmPayment(paymentId) {
-  return {
-    payment: {
-      id: paymentId,
-      status: "confirmed",
+  const response = await fetch(`${BASE_URL}/payments/${paymentId}/confirm`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-    receipt: {
-      id: "rec-001",
-      payment_id: paymentId,
-      receipt_number: "RCP-20260623-AB1CD",
-      items: [{ name: "Anti-Reflective Lenses", quantity: 1, price: 265 }],
-      subtotal: 265,
-      tax: 31.8,
-      total: 296.8,
-      generated_at: new Date().toISOString(),
-    },
-  };
-}
+  });
 
-export async function fetchPayments() {
-  return [];
+  return handleResponse(response);
 }

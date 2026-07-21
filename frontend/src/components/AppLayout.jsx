@@ -8,7 +8,7 @@ import PatientRegistrationForm from './objective1/Registration/PatientRegistrati
 import AppointmentManager from './objective1/Appointments/AppointmentManager';
 import AppObjective3 from './objective3/AppReceipt/AppObjective3.jsx';
 import Dashboard from "./objective1/Dashboard/Dashboard.jsx"
-
+import PredictionDashboard from "../objective2/PredictionDashboard";
 
 export default function AppLayout({ children }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -49,6 +49,10 @@ export default function AppLayout({ children }) {
         return (
           <AppointmentManager />
         );
+
+      case "prediction":
+          return <PredictionDashboard />;
+        
       case 'dashboard':
       default:
         return (
@@ -100,6 +104,11 @@ export default function AppLayout({ children }) {
             <li>
               <button className={getButtonClass('appointments')} onClick={() => setActiveTab('appointments')}>
                 Appointment Schedules
+              </button>
+            </li>
+            <li>
+              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('prediction')}>
+                Prediction Dashboard
               </button>
             </li>
           </ul>

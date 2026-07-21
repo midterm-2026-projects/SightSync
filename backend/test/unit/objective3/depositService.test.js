@@ -84,7 +84,7 @@ describe('Deposit Service Tests', () => {
 
   describe('createDeposit', () => {
     it('should successfully create a deposit with valid data', async () => {
-      const validData = { customer_id: 1, amount: 500, deposit_date: '2026-07-20' };
+      const validData = { amount: 500, deposit_date: '2026-07-20' };
       const expectedResult = { id: 1, ...validData, status: 'held' };
       
       mockDepositModelMethods.create.mockResolvedValue(expectedResult);
@@ -95,20 +95,14 @@ describe('Deposit Service Tests', () => {
       expect(mockDepositModelMethods.create).toHaveBeenCalledWith(validData);
     });
 
-    it('should throw an error if customer_id is missing', () => {
-      const invalidData = { amount: 500, deposit_date: '2026-07-20' };
-
-      expect(() => createDeposit(invalidData)).toThrow();
-    });
-
     it('should throw an error if amount is 0 or negative', () => {
-      const invalidData = { customer_id: 1, amount: 0, deposit_date: '2026-07-20' };
+      const invalidData = { amount: 0, deposit_date: '2026-07-20' };
 
       expect(() => createDeposit(invalidData)).toThrow();
     });
 
     it('should throw an error if deposit_date is missing', () => {
-      const invalidData = { customer_id: 1, amount: 100 };
+      const invalidData = { amount: 100 };
 
       expect(() => createDeposit(invalidData)).toThrow();
     });
