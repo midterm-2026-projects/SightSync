@@ -143,7 +143,6 @@ describe("POST /inventory", () => {
 
   });
 
-  // ---------- NEW TEST ----------
   it("should return validation error when product type is invalid", async () => {
 
     inventoryServices.validateInventory.mockReturnValue({
@@ -168,7 +167,6 @@ describe("POST /inventory", () => {
 
   });
 
-  // ---------- NEW TEST ----------
   it("should return validation error when price is missing", async () => {
 
     inventoryServices.validateInventory.mockReturnValue({
@@ -179,7 +177,7 @@ describe("POST /inventory", () => {
     const response = await request(app)
       .post("/inventory")
       .send({
-        name: "Blue Cut Lens",
+        name: "Blue Cut Lens",  
         type: "Lens",
         stock: 20,
       });
@@ -192,7 +190,6 @@ describe("POST /inventory", () => {
 
   });
 
-  // ---------- NEW TEST ----------
   it("should return validation error when price is less than or equal to zero", async () => {
 
     inventoryServices.validateInventory.mockReturnValue({
@@ -217,7 +214,6 @@ describe("POST /inventory", () => {
 
   });
 
-  // ---------- NEW TEST ----------
   it("should return validation error when stock is missing", async () => {
 
     inventoryServices.validateInventory.mockReturnValue({
@@ -241,7 +237,6 @@ describe("POST /inventory", () => {
 
   });
 
-  // ---------- NEW TEST ----------
   it("should return validation error when stock is negative", async () => {
 
     inventoryServices.validateInventory.mockReturnValue({
@@ -311,7 +306,7 @@ describe("PUT /inventory/:table/:id", () => {
     });
 
     const response = await request(app)
-      .put("/inventory/lenses/1")
+      .put("/inventory/lenses/1/price")
       .send({
         price: 2000,
       });
@@ -327,7 +322,6 @@ describe("PUT /inventory/:table/:id", () => {
 
   });
 
-  // ---------- NEW TEST ----------
   it("should return validation error when price is missing", async () => {
 
     inventoryServices.validatePrice.mockReturnValue({
@@ -336,7 +330,7 @@ describe("PUT /inventory/:table/:id", () => {
     });
 
     const response = await request(app)
-      .put("/inventory/lenses/1")
+      .put("/inventory/lenses/1/price")
       .send({});
 
     expect(response.status).toBe(400);
@@ -355,7 +349,7 @@ describe("PUT /inventory/:table/:id", () => {
     });
 
     const response = await request(app)
-      .put("/inventory/lenses/1")
+      .put("/inventory/lenses/1/price")
       .send({
         price: 0,
       });
@@ -368,7 +362,6 @@ describe("PUT /inventory/:table/:id", () => {
 
   });
 
-  // ---------- NEW TEST ----------
   it("should return not found when inventory does not exist", async () => {
 
     inventoryServices.validatePrice.mockReturnValue({
@@ -378,7 +371,7 @@ describe("PUT /inventory/:table/:id", () => {
     inventoryModels.updateInventoryPrice.mockResolvedValue(null);
 
     const response = await request(app)
-      .put("/inventory/lenses/999")
+      .put("/inventory/lenses/999/price")
       .send({
         price: 2000,
       });
@@ -391,7 +384,7 @@ describe("PUT /inventory/:table/:id", () => {
 
   });
 
-  // ---------- NEW TEST ----------
+
   it("should return server error when updating inventory price fails", async () => {
 
     inventoryServices.validatePrice.mockReturnValue({
@@ -403,7 +396,7 @@ describe("PUT /inventory/:table/:id", () => {
     );
 
     const response = await request(app)
-      .put("/inventory/lenses/1")
+      .put("/inventory/lenses/1/price")
       .send({
         price: 2000,
       });
@@ -419,7 +412,7 @@ describe("PUT /inventory/:table/:id", () => {
   it("should return validation error when table is invalid", async () => {
 
     const response = await request(app)
-      .put("/inventory/products/1")
+      .put("/inventory/products/1/price")
       .send({
         price: 2000,
       });
@@ -435,7 +428,7 @@ describe("PUT /inventory/:table/:id", () => {
   it("should return validation error when inventory id is invalid", async () => {
 
     const response = await request(app)
-      .put("/inventory/lenses/abc")
+      .put("/inventory/lenses/abc/price")
       .send({
         price: 2000,
       });
@@ -447,5 +440,195 @@ describe("PUT /inventory/:table/:id", () => {
     );
 
   });
+
+// NEW
+
+describe("GET /inventory/:table/:id/stock", () => {
+
+  it("should fetch current stock", async () => {
+
+    inventoryModels.getCurrentStock.mockResolvedValue({
+      id: 1,
+      name: "Blue Cut Lens",
+      stock: 20,
+    });
+
+    const response = await request(app)
+      .get("/inventory/lenses/1/stock");
+
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+      id: 1,
+      name: "Blue Cut Lens",
+      stock: 20,
+    });
+
+  });
+
+  it("should return invalid inventory table", async () => {
+
+    const response = await request(app)
+      .get("/inventory/products/1/stock");
+
+    expect(response.status).toBe(400);
+
+    expect(response.body.message)
+      .toBe("Invalid inventory table.");
+
+  });
+
+  it("should return invalid inventory id", async () => {
+
+    const response = await request(app)
+      .get("/inventory/lenses/abc/stock");
+
+    expect(response.status).toBe(400);
+
+    expect(response.body.message)
+      .toBe("Invalid inventory ID.");
+
+  });
+
+  it("should return inventory not found", async () => {
+
+    inventoryModels.getCurrentStock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .get("/inventory/lenses/999/stock");
+
+    expect(response.status).toBe(404);
+
+    expect(response.body.message)
+      .toBe("Inventory not found.");
+
+  });
+
+  it("should return server error", async () => {
+
+    inventoryModels.getCurrentStock.mockRejectedValue(
+      new Error("Database Error")
+    );
+
+    const response = await request(app)
+      .get("/inventory/lenses/1/stock");
+
+    expect(response.status).toBe(500);
+
+    expect(response.body.message)
+      .toBe("Failed to fetch current stock.");
+
+  });
+
+});
+
+// NEW
+
+describe("PUT /inventory/:table/:id/stock", () => {
+
+  it("should update inventory stock", async () => {
+
+    inventoryModels.updateStock.mockResolvedValue({
+      id: 1,
+      name: "Blue Cut Lens",
+      stock: 15,
+    });
+
+    const response = await request(app)
+      .put("/inventory/lenses/1/stock")
+      .send({
+        stock: 15,
+      });
+
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+      id: 1,
+      name: "Blue Cut Lens",
+      stock: 15,
+    });
+
+  });
+
+  it("should return invalid inventory table", async () => {
+
+    const response = await request(app)
+      .put("/inventory/products/1/stock")
+      .send({
+        stock: 10,
+      });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body.message)
+      .toBe("Invalid inventory table.");
+
+  });
+
+  it("should return invalid inventory id", async () => {
+
+    const response = await request(app)
+      .put("/inventory/lenses/abc/stock")
+      .send({
+        stock: 10,
+      });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body.message)
+      .toBe("Invalid inventory ID.");
+
+  });
+
+  it("should return validation error when stock is missing", async () => {
+
+    const response = await request(app)
+      .put("/inventory/lenses/1/stock")
+      .send({});
+
+    expect(response.status).toBe(400);
+
+    expect(response.body.message)
+      .toBe("Stock is required.");
+
+  });
+
+  it("should return inventory not found", async () => {
+
+    inventoryModels.updateStock.mockResolvedValue(null);
+
+    const response = await request(app)
+      .put("/inventory/lenses/999/stock")
+      .send({
+        stock: 10,
+      });
+
+    expect(response.status).toBe(404);
+
+    expect(response.body.message)
+      .toBe("Inventory not found.");
+
+  });
+
+  it("should return server error", async () => {
+
+    inventoryModels.updateStock.mockRejectedValue(
+      new Error("Database Error")
+    );
+
+    const response = await request(app)
+      .put("/inventory/lenses/1/stock")
+      .send({
+        stock: 10,
+      });
+
+    expect(response.status).toBe(500);
+
+    expect(response.body.message)
+      .toBe("Failed to update stock.");
+
+  });
+
+});
 
 });
