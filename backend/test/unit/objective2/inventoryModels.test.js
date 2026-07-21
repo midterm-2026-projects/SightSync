@@ -1,7 +1,6 @@
 import { describe, it, expect, afterEach, afterAll } from "vitest";
 import pool from "../../../database/db.js";
-import {getAllInventory, createInventory, updateInventoryPrice,} from "../../../src/objective2/models/inventoryModels.js";
-
+import {getAllInventory, createInventory, updateInventoryPrice, getCurrentStock, updateStock, findLensByName, findFrameByName,} from "../../../src/objective2/models/inventoryModels.js";
 
 const createdRecords = [];
 
@@ -22,9 +21,9 @@ describe("Inventory Models", () => {
 
   });
 
-  afterAll(async () => {
-    await pool.end();
-  });
+  // afterAll(async () => {
+  //   await pool.end();
+  // });
 
   it("should retrieve all inventory from the database", async () => {
 
@@ -159,6 +158,124 @@ describe("Inventory Models", () => {
     expect(result).toBeNull();
 
   });
+
+  // NEW
+
+  it("should retrieve current stock of a lens", async () => {
+
+  // Arrange
+  const inventory = {
+    name: `Lens ${Date.now()}`,
+    type: "Lens",
+    price: 1500,
+    stock: 20,
+  };
+
+  const created = await createInventory(inventory);
+
+  createdRecords.push({
+    table: "lenses",
+    id: created.id,
+  });
+
+  // Act
+  const result = await getCurrentStock(
+    "lenses",
+    created.id
+  );
+
+  // Assert
+  expect(result.id).toBe(created.id);
+  expect(result.name).toBe(inventory.name);
+  expect(result.stock).toBe(20);
+
+});
+
+it("should update inventory stock", async () => {
+
+  // Arrange
+  const inventory = {
+    name: `Lens ${Date.now()}`,
+    type: "Lens",
+    price: 1500,
+    stock: 20,
+  };
+
+  const created = await createInventory(inventory);
+
+  createdRecords.push({
+    table: "lenses",
+    id: created.id,
+  });
+
+  // Act
+  const result = await updateStock(
+    "lenses",
+    created.id,
+    15
+  );
+
+  // Assert
+  expect(result.id).toBe(created.id);
+  expect(result.stock).toBe(15);
+
+});
+
+it("should find lens by name", async () => {
+
+  // Arrange
+  const inventory = {
+    name: `Lens ${Date.now()}`,
+    type: "Lens",
+    price: 1500,
+    stock: 20,
+  };
+
+  const created = await createInventory(inventory);
+
+  createdRecords.push({
+    table: "lenses",
+    id: created.id,
+  });
+
+  // Act
+  const result = await findLensByName(
+    inventory.name
+  );
+
+  // Assert
+  expect(result.id).toBe(created.id);
+  expect(result.name).toBe(inventory.name);
+
+});
+
+it("should find frame by name", async () => {
+
+  // Arrange
+  const inventory = {
+    name: `Frame ${Date.now()}`,
+    type: "Frame",
+    price: 2500,
+    stock: 10,
+  };
+
+  const created = await createInventory(inventory);
+
+  createdRecords.push({
+    table: "frames",
+    id: created.id,
+  });
+
+  // Act
+  const result = await findFrameByName(
+    inventory.name
+  );
+
+  // Assert
+  expect(result.id).toBe(created.id);
+  expect(result.name).toBe(inventory.name);
+
+});
 
 });
 

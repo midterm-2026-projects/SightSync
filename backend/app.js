@@ -4,6 +4,7 @@ import patientRoutes from "./src/objective1/routes/patient.routes.js";
 import appointmentRoutes from "./src/objective1/routes/appointment.routes.js";
 import doctorAvailabilityRoutes from "./src/objective1/routes/doctorAvailability.routes.js";
 import orderRoutes from "./src/objective2/routes/order.js";
+import predictionRoutes from "./src/objective2/routes/prediction.js";
 import summaryRoutes from "./src/objective1/routes/summary.routes.js";
 import doctorRoutes from "./src/objective1/routes/doctor.routes.js";
 
@@ -25,7 +26,7 @@ app.use(cors({
 app.get("/", (req, res) => {
 
     res.send("SightSync Backend Running");
-
+    
 });
 app.use("/api/patients", patientRoutes);
 app.use("/api/appointments", appointmentRoutes);
@@ -34,5 +35,6 @@ app.use("/api/summaries", summaryRoutes);
 app.use("/inventory", inventoryRoutes);
 app.use("/orders", orderRoutes);
 app.use("/api/doctors", doctorRoutes);
+app.use("/prediction", predictionRoutes);
 
 export default app;

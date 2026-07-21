@@ -143,6 +143,92 @@ describe("POST /orders", () => {
 
   });
 
+  // NEW
+
+  it("should return lens not found", async () => {
+
+    orderServices.addOrderService.mockResolvedValue({
+      valid: false,
+      message: "Lens not found.",
+    });
+
+    const response = await request(app)
+      .post("/orders")
+      .send({
+        patientName: "Juan Dela Cruz",
+        lensName: "Unknown Lens",
+        frameName: "Metal Frame",
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("Lens not found.");
+
+  });
+
+  it("should return frame not found", async () => {
+
+    orderServices.addOrderService.mockResolvedValue({
+      valid: false,
+      message: "Frame not found.",
+    });
+
+    const response = await request(app)
+      .post("/orders")
+      .send({
+        patientName: "Juan Dela Cruz",
+        lensName: "Blue Cut Lens",
+        frameName: "Unknown Frame",
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("Frame not found.");
+
+  });
+
+  it("should return selected lens is out of stock", async () => {
+
+    orderServices.addOrderService.mockResolvedValue({
+      valid: false,
+      message: "Selected lens is out of stock.",
+    });
+
+    const response = await request(app)
+      .post("/orders")
+      .send({
+        patientName: "Juan Dela Cruz",
+        lensName: "Blue Cut Lens",
+        frameName: "Metal Frame",
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Selected lens is out of stock."
+    );
+
+  });
+
+  it("should return selected frame is out of stock", async () => {
+
+    orderServices.addOrderService.mockResolvedValue({
+      valid: false,
+      message: "Selected frame is out of stock.",
+    });
+
+    const response = await request(app)
+      .post("/orders")
+      .send({
+        patientName: "Juan Dela Cruz",
+        lensName: "Blue Cut Lens",
+        frameName: "Metal Frame",
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Selected frame is out of stock."
+    );
+
+  });
+
   it("should return server error", async () => {
 
     orderServices.addOrderService.mockRejectedValue(
