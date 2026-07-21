@@ -1,12 +1,12 @@
-const express = require('express');
-const orderController = require('../controllers/orderController');
-const { validateCreateOrder, validateStatusUpdate } = require('../middleware/validateOrder');
+import express from "express"
+import { createOrder, getOrder, getAllOrders, updateOrderStatus  } from "../controller/orderController.js"
+import { validateCreateOrder, validateStatusUpdate } from "../middleware/validateOrder.js"
 
 const router = express.Router();
 
-router.post('/', validateCreateOrder, orderController.createOrder);
-router.get('/', orderController.getAllOrders);
-router.get('/:id', orderController.getOrder);
-router.patch('/:id/status', validateStatusUpdate, orderController.updateOrderStatus);
+router.post('/', validateCreateOrder, createOrder);
+router.get('/', getAllOrders);
+router.get('/:id', getOrder);
+router.patch('/:id/status', validateStatusUpdate, updateOrderStatus);
 
-module.exports = router;
+export default router

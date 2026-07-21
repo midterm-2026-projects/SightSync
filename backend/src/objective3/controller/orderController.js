@@ -1,17 +1,18 @@
-const orderService = require('../service/orderService');
+import orderService from '../service/orderService.js';
 
-function createOrder(req, res, next) {
+export async function createOrder(req, res, next) {
   try {
-    const order = orderService.createOrder(req.body);
+    // Note: Added await here since your database model uses async/await
+    const order = await orderService.createOrder(req.body);
     res.status(201).json(order);
   } catch (err) {
     next(err);
   }
 }
 
-function getOrder(req, res, next) {
+export async function getOrder(req, res, next) {
   try {
-    const order = orderService.getOrder(req.params.id);
+    const order = await orderService.getOrder(req.params.id);
     if (!order) {
       return res.status(404).json({ error: `Order with id "${req.params.id}" not found` });
     }
@@ -21,21 +22,20 @@ function getOrder(req, res, next) {
   }
 }
 
-function getAllOrders(req, res, next) {
+export async function getAllOrders(req, res, next) {
   try {
-    res.status(200).json(orderService.getAllOrders());
+    const orders = await orderService.getAllOrders();
+    res.status(200).json(orders);
   } catch (err) {
     next(err);
   }
 }
 
-function updateOrderStatus(req, res, next) {
+export async function updateOrderStatus(req, res, next) {
   try {
-    const updated = orderService.updateStatus(req.params.id, req.body.status);
+    const updated = await orderService.updateStatus(req.params.id, req.body.status);
     res.status(200).json(updated);
   } catch (err) {
     next(err);
   }
 }
-
-module.exports = { createOrder, getOrder, getAllOrders, updateOrderStatus };

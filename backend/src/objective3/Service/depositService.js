@@ -1,22 +1,13 @@
 import DepositModel from "../Models/deposit.js";
 import { ConstraintError } from "../middleware/errors.js";
+import pool from "../../../database/db.js";
 
-// Kung ang DepositModel constructor ay nangangailangan ng db,
-// ipasa rito ang db import. Halimbawa:
-// import db from "../db.js";
-// const depositModel = new DepositModel(db);
-
-// Kung mocked lang ito sa tests:
-const depositModel = new DepositModel();
+const depositModel = new DepositModel(pool);
 
 /**
  * Creates a new deposit after validating required inputs.
  */
 export function createDeposit(data) {
-  if (!data || !data.customer_id) {
-    throw new Error("Customer ID is required to register a deposit");
-  }
-
   if (
     data.amount === undefined ||
     data.amount === null ||
