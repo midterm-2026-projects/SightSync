@@ -12,6 +12,8 @@ vi.mock("../../services/paymentsApi", () => {
   return {
     createPayment: vi.fn(),
     confirmPayment: vi.fn(),
+    fetchPatientsList: vi.fn().mockResolvedValue([]),
+    fetchDoctorsList: vi.fn().mockResolvedValue([]),
   };
 });
 

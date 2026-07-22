@@ -5,14 +5,14 @@ class PaymentService {
     this.db = db;
   }
 
-  async create({ amount, payment_date, method = 'cash', status = 'completed' }) {
+  async create({ amount, payment_date, method = 'cash', status = 'completed', patient_name, doctor_name }) {
     try {
       const query = `
-        INSERT INTO payments (amount, payment_date, method, status)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO payments (amount, payment_date, method, status, patient_name, doctor_name)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
       `;
-      const res = await this.db.query(query, [amount, payment_date, method, status]);
+      const res = await this.db.query(query, [amount, payment_date, method, status, patient_name, doctor_name]);
       return res.rows[0];
     } catch (err) {
       throw new ConstraintError(`Failed to create payment: ${err.message}`, err);
