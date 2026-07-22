@@ -44,10 +44,10 @@ export default function PaymentReceiptView({ receipt, payment, onPrint }) {
 
       {/* Metadata Metrics Section */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", fontSize: "14px", marginBottom: "20px" }}>
-        <div><strong>Receipt No:</strong> {receipt.receipt_number}</div>
-        <div><strong>Date:</strong> {formatDate(receipt.generated_at)}</div>
-        <div><strong>Patient Name:</strong> {payment.patient_name}</div>
-        <div><strong>Doctor Name:</strong> {payment.doctor_name}</div>
+        <div><strong>Receipt No:</strong> {receipt.receipt_number || receipt.receiptNumber}</div>
+        <div><strong>Date:</strong> {formatDate(receipt.generated_at || receipt.issuedDate || receipt.issued_date)}</div>
+        <div><strong>Patient Name:</strong> {payment.patient_name || (payment.customer_id ? `Customer #${payment.customer_id}` : "")}</div>
+        <div><strong>Doctor Name:</strong> {payment.doctor_name || "—"}</div>
         <div><strong>OD Rx:</strong> {payment.od_rx}</div>
         <div><strong>OS Rx:</strong> {payment.os_rx}</div>
         {/* transformed to uppercase directly in JS to satisfy the case-sensitive /CASH/ regex check */}

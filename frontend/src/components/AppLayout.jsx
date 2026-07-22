@@ -7,6 +7,7 @@ import PatientDirectoryView from './objective1/Management/PatientDirectoryView';
 import PatientRegistrationForm from './objective1/Registration/PatientRegistrationForm';
 import AppointmentManager from './objective1/Appointments/AppointmentManager';
 import AppObjective3 from './objective3/AppReceipt/AppObjective3.jsx';
+import PaymentsPanel from './objective3/PaymentsPanel.jsx';
 import Dashboard from "./objective1/Dashboard/Dashboard.jsx"
 import PredictionDashboard from "./objective2/PredictionDashboard";
 
@@ -43,8 +44,12 @@ export default function AppLayout({ children }) {
         return <PatientDirectoryView />;
       case 'registration':
         return <PatientRegistrationForm />;
-      case 'receipts':
-        return <AppObjective3 />;
+      case 'payments':
+        return (
+          <div style={{ padding: '24px', background: '#f8fafc', minHeight: '80vh' }}>
+            <PaymentsPanel />
+          </div>
+        );
       case 'appointments':
         return (
           <AppointmentManager />
@@ -82,6 +87,11 @@ export default function AppLayout({ children }) {
               </button>
             </li>
             <li>
+              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('prediction')}>
+                Prediction Dashboard
+              </button>
+            </li>
+            <li>
               <button className={getButtonClass('inventory')} onClick={() => setActiveTab('inventory')}>
                 Inventory Management
               </button>
@@ -97,8 +107,8 @@ export default function AppLayout({ children }) {
               </button>
             </li>
             <li>
-              <button className={getButtonClass('receipts')} onClick={() => setActiveTab('receipts')}>
-                Receipt Generator
+              <button className={getButtonClass('payments')} onClick={() => setActiveTab('payments')}>
+                Payments & Receipts
               </button>
             </li>
             <li>
@@ -106,11 +116,7 @@ export default function AppLayout({ children }) {
                 Appointment Schedules
               </button>
             </li>
-            <li>
-              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('prediction')}>
-                Prediction Dashboard
-              </button>
-            </li>
+            
           </ul>
         </nav>
 

@@ -1,11 +1,28 @@
-import { useMemo, useState } from "react";
-import { confirmPayment, createPayment } from "../../services/paymentsApi";
+import { useEffect, useMemo, useState } from "react";
+import { confirmPayment, createPayment, fetchDoctorsList, fetchPatientsList } from "../../services/paymentsApi";
 
 const currency = (value) => `₱${Number(value || 0).toFixed(2)}`;
+
+function getPatientFullName(p) {
+  if (p.first_name || p.last_name) {
+    return `${p.first_name || ""} ${p.last_name || ""}`.trim();
+  }
+  return p.name || `Patient #${p.id}`;
+}
+
+function getDoctorFullName(d) {
+  if (d.first_name || d.last_name || d.firstName || d.lastName) {
+    const first = d.first_name || d.firstName || "";
+    const last = d.last_name || d.lastName || "";
+    return `Dr. ${first} ${last}`.trim();
+  }
+  return d.name || `Doctor #${d.id}`;
+}
 
 export default function PaymentForm({ prefill = {}, onSuccess }) {
   const [patientName, setPatientName] = useState(prefill.patientName || "");
   const [doctorName, setDoctorName] = useState(prefill.doctorName || "");
+  const [selectedCustomerId, setSelectedCustomerId] = useState(prefill.customerId || 1);
   const [amount, setAmount] = useState(
     prefill.items?.length
       ? prefill.items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 1), 0).toFixed(2)
@@ -18,7 +35,39 @@ export default function PaymentForm({ prefill = {}, onSuccess }) {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const canSubmit = useMemo(() => patientName.trim() && doctorName.trim() && amount !== "" && Number(amount) > 0, [patientName, doctorName, amount]);
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [loadingOptions, setLoadingOptions] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const getPatients = typeof fetchPatientsList === 'function' ? fetchPatientsList() : Promise.resolve([]);
+    const getDoctors = typeof fetchDoctorsList === 'function' ? fetchDoctorsList() : Promise.resolve([]);
+
+    Promise.all([getPatients, getDoctors])
+      .then(([patientData, doctorData]) => {
+        if (!isMounted) return;
+        setPatients(Array.isArray(patientData) ? patientData : []);
+        setDoctors(Array.isArray(doctorData) ? doctorData : []);
+      })
+      .catch((err) => console.error("Error fetching patients/doctors:", err))
+      .finally(() => {
+        if (isMounted) setLoadingOptions(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
+
+  const canSubmit = useMemo(
+    () => patientName.trim() && doctorName.trim() && amount !== "" && Number(amount) > 0,
+    [patientName, doctorName, amount]
+  );
+
+  const handlePatientChange = (e) => {
+    const val = e.target.value;
+    setPatientName(val);
+    const matched = patients.find((p) => getPatientFullName(p) === val);
+    if (matched?.id) setSelectedCustomerId(matched.id);
+  };
 
   const handleCreate = async () => {
     setError("");
@@ -26,6 +75,7 @@ export default function PaymentForm({ prefill = {}, onSuccess }) {
     setLoading(true);
     try {
       const payment = await createPayment({
+        customer_id: selectedCustomerId,
         patient_name: patientName,
         doctor_name: doctorName,
         amount: Number(amount),
@@ -49,18 +99,11 @@ export default function PaymentForm({ prefill = {}, onSuccess }) {
       const currentAmount = Number(amount);
       const updatedReceipt = {
         ...result.receipt,
-        items: [
-          {
-            name: "Payment Amount",
-            quantity: 1,
-            price: currentAmount,
-          },
-        ],
+        items: [{ name: "Payment Amount", quantity: 1, price: currentAmount }],
         subtotal: currentAmount,
         tax: Number((currentAmount * 0.12).toFixed(2)),
         total: Number((currentAmount * 1.12).toFixed(2)),
       };
-
       const enrichedResult = {
         payment: {
           ...result.payment,
@@ -86,11 +129,10 @@ export default function PaymentForm({ prefill = {}, onSuccess }) {
     }
   };
 
-  const handleCancel = () => {
-    setError("");
-    setSuccess("");
-    setStep(1);
-  };
+  const handleCancel = () => { setError(""); setSuccess(""); setStep(1); };
+
+  const selectStyle = { width: "100%", padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "14px", background: "#fff", cursor: "pointer" };
+  const labelStyle = { display: "block", marginBottom: "4px", fontWeight: 600, fontSize: "13px", color: "#374151" };
 
   return (
     <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "20px", display: "grid", gap: "12px" }}>
@@ -98,24 +140,85 @@ export default function PaymentForm({ prefill = {}, onSuccess }) {
 
       {step === 1 ? (
         <>
+          {/* Patient Name — dropdown from backend with free-text fallback */}
           <label>
-            <span style={{ display: "block", marginBottom: "4px" }}>Patient Name</span>
-            <input aria-label="Patient Name" value={patientName} onChange={(e) => setPatientName(e.target.value)} style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px" }} />
+            <span style={labelStyle}>
+              Patient Name
+              {loadingOptions && <span style={{ fontSize: "11px", color: "#94a3b8", marginLeft: 6, fontWeight: 400 }}>fetching…</span>}
+            </span>
+            {patients.length > 0 ? (
+              <select
+                aria-label="Patient Name"
+                value={patientName}
+                onChange={handlePatientChange}
+                style={selectStyle}
+              >
+                <option value="">— Select Patient —</option>
+                {patients.map((p) => {
+                  const name = getPatientFullName(p);
+                  return <option key={p.id} value={name}>{name}</option>;
+                })}
+              </select>
+            ) : (
+              <input
+                aria-label="Patient Name"
+                value={patientName}
+                onChange={handlePatientChange}
+                placeholder="Enter patient name"
+                style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px" }}
+              />
+            )}
+          </label>
+
+          {/* Doctor — dropdown from backend with free-text fallback */}
+          <label>
+            <span style={labelStyle}>
+              Doctor
+              {loadingOptions && <span style={{ fontSize: "11px", color: "#94a3b8", marginLeft: 6, fontWeight: 400 }}>fetching…</span>}
+            </span>
+            {doctors.length > 0 ? (
+              <select
+                aria-label="Doctor"
+                value={doctorName}
+                onChange={(e) => setDoctorName(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">— Select Doctor —</option>
+                {doctors.map((d) => {
+                  const name = getDoctorFullName(d);
+                  return <option key={d.id} value={name}>{name}</option>;
+                })}
+              </select>
+            ) : (
+              <input
+                aria-label="Doctor"
+                value={doctorName}
+                onChange={(e) => setDoctorName(e.target.value)}
+                placeholder="Enter doctor name"
+                style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px" }}
+              />
+            )}
           </label>
 
           <label>
-            <span style={{ display: "block", marginBottom: "4px" }}>Doctor</span>
-            <input aria-label="Doctor" value={doctorName} onChange={(e) => setDoctorName(e.target.value)} style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px" }} />
+            <span style={labelStyle}>Amount</span>
+            <input
+              aria-label="Amount"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px" }}
+            />
           </label>
 
           <label>
-            <span style={{ display: "block", marginBottom: "4px" }}>Amount</span>
-            <input aria-label="Amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px" }} />
-          </label>
-
-          <label>
-            <span style={{ display: "block", marginBottom: "4px" }}>Payment Method</span>
-            <select aria-label="Payment Method" value={method} onChange={(e) => setMethod(e.target.value)} style={{ width: "100%", padding: "8px", border: "1px solid #cbd5e1", borderRadius: "6px" }}>
+            <span style={labelStyle}>Payment Method</span>
+            <select
+              aria-label="Payment Method"
+              value={method}
+              onChange={(e) => setMethod(e.target.value)}
+              style={selectStyle}
+            >
               <option value="cash">Cash</option>
               <option value="card">Card</option>
               <option value="insurance">Insurance</option>
@@ -123,7 +226,11 @@ export default function PaymentForm({ prefill = {}, onSuccess }) {
             </select>
           </label>
 
-          <button onClick={handleCreate} disabled={!canSubmit || loading} style={{ padding: "10px 12px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", cursor: canSubmit && !loading ? "pointer" : "not-allowed" }}>
+          <button
+            onClick={handleCreate}
+            disabled={!canSubmit || loading}
+            style={{ padding: "10px 12px", borderRadius: "6px", border: "none", background: "#2563eb", color: "#fff", cursor: canSubmit && !loading ? "pointer" : "not-allowed" }}
+          >
             {loading ? "Creating..." : "Create Payment Record"}
           </button>
         </>

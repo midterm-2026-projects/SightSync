@@ -9,7 +9,9 @@ import * as api from "../../services/paymentsApi";
 // Fixed: The mock path must match your exact import string above
 vi.mock("../../services/paymentsApi", () => {
   return {
-    fetchPayments: vi.fn()
+    fetchPayments: vi.fn(),
+    fetchPatientsList: vi.fn().mockResolvedValue([]),
+    fetchDoctorsList: vi.fn().mockResolvedValue([]),
   };
 });
 
@@ -94,7 +96,7 @@ describe("PaymentsPanel — rendering", () => {
     }
     
     render(<PaymentsPanel />);
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/loading/i).length).toBeGreaterThan(0);
   });
 
   test("shows empty message when no payments", async () => {
