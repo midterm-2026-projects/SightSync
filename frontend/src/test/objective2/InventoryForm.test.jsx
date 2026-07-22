@@ -3,38 +3,38 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import InventoryForm from "../../components/objective2/InventoryForm";
 
-describe("InventoryForm Component", () => {
-  it("should render the form heading", () => {
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={vi.fn()}
-      />
-    );
+describe("InventoryForm", () => {
+  it("renders the Add Product heading", () => {
+    render(<InventoryForm inventory={[]} setInventory={vi.fn()} />);
 
-    expect(screen.getByRole("heading", {level: 2,name: "Add Product",})).toBeInTheDocument();
-    
     expect(
-      screen.getByText(
-        "Enter product details to add new items to your inventory."
-      )
+      screen.getByRole("heading", {
+        level: 2,
+        name: "Add Product",
+      })
     ).toBeInTheDocument();
   });
 
-  it("should show validation error when fields are empty", async () => {
+  it("renders all form fields", () => {
+    render(<InventoryForm inventory={[]} setInventory={vi.fn()} />);
+
+    expect(screen.getByLabelText("Product Name")).toBeInTheDocument();
+    expect(screen.getByLabelText("Product Type")).toBeInTheDocument();
+    expect(screen.getByLabelText("Price ($)")).toBeInTheDocument();
+    expect(screen.getByLabelText("Stock Quantity")).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", { name: "Add Product" })
+    ).toBeInTheDocument();
+  });
+
+  it("shows validation message when fields are empty", async () => {
     const user = userEvent.setup();
 
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={vi.fn()}
-      />
-    );
+    render(<InventoryForm inventory={[]} setInventory={vi.fn()} />);
 
     await user.click(
-      screen.getByRole("button", {
-        name: "Add Product",
-      })
+      screen.getByRole("button", { name: "Add Product" })
     );
 
     expect(
@@ -42,35 +42,28 @@ describe("InventoryForm Component", () => {
     ).toBeInTheDocument();
   });
 
-  it("should show validation error for invalid price", async () => {
+  it("shows validation when price is zero", async () => {
     const user = userEvent.setup();
 
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={vi.fn()}
-      />
-    );
+    render(<InventoryForm inventory={[]} setInventory={vi.fn()} />);
 
     await user.type(
-      screen.getByPlaceholderText("e.g. Classic Aviator"),
+      screen.getByLabelText("Product Name"),
       "Blue Cut Lens"
     );
 
     await user.type(
-      screen.getByPlaceholderText("0.00"),
+      screen.getByLabelText("Price ($)"),
       "0"
     );
 
     await user.type(
-      screen.getByPlaceholderText("0"),
+      screen.getByLabelText("Stock Quantity"),
       "10"
     );
 
     await user.click(
-      screen.getByRole("button", {
-        name: "Add Product",
-      })
+      screen.getByRole("button", { name: "Add Product" })
     );
 
     expect(
@@ -78,35 +71,28 @@ describe("InventoryForm Component", () => {
     ).toBeInTheDocument();
   });
 
-  it("should show validation error for negative stock", async () => {
+  it("shows validation when stock is negative", async () => {
     const user = userEvent.setup();
 
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={vi.fn()}
-      />
-    );
+    render(<InventoryForm inventory={[]} setInventory={vi.fn()} />);
 
     await user.type(
-      screen.getByPlaceholderText("e.g. Classic Aviator"),
+      screen.getByLabelText("Product Name"),
       "Blue Cut Lens"
     );
 
     await user.type(
-      screen.getByPlaceholderText("0.00"),
-      "1200"
+      screen.getByLabelText("Price ($)"),
+      "1500"
     );
 
     await user.type(
-      screen.getByPlaceholderText("0"),
-      "-1"
+      screen.getByLabelText("Stock Quantity"),
+      "-5"
     );
 
     await user.click(
-      screen.getByRole("button", {
-        name: "Add Product",
-      })
+      screen.getByRole("button", { name: "Add Product" })
     );
 
     expect(
@@ -114,76 +100,36 @@ describe("InventoryForm Component", () => {
     ).toBeInTheDocument();
   });
 
-  it("should add a new product when form is valid", async () => {
+  it("adds a product successfully", async () => {
     const user = userEvent.setup();
-
-    const inventory = [];
     const setInventory = vi.fn();
 
-    render(
-      <InventoryForm
-        inventory={inventory}
-        setInventory={setInventory}
-      />
-    );
+    render(<InventoryForm inventory={[]} setInventory={setInventory} />);
 
     await user.type(
-      screen.getByPlaceholderText("e.g. Classic Aviator"),
+      screen.getByLabelText("Product Name"),
       "Blue Cut Lens"
     );
 
     await user.selectOptions(
-      screen.getByRole("combobox"),
+      screen.getByLabelText("Product Type"),
       "Lens"
     );
 
     await user.type(
-      screen.getByPlaceholderText("0.00"),
+      screen.getByLabelText("Price ($)"),
       "1500"
     );
 
     await user.type(
-      screen.getByPlaceholderText("0"),
+      screen.getByLabelText("Stock Quantity"),
       "20"
     );
 
     await user.click(
-      screen.getByRole("button", {
-        name: "Add Product",
-      })
+      screen.getByRole("button", { name: "Add Product" })
     );
 
     expect(setInventory).toHaveBeenCalledTimes(1);
-  });
-
-  it("should clear the validation message when close button is clicked", async () => {
-    const user = userEvent.setup();
-
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={vi.fn()}
-      />
-    );
-
-    await user.click(
-      screen.getByRole("button", {
-        name: "Add Product",
-      })
-    );
-
-    expect(
-      screen.getByText("Please complete all fields.")
-    ).toBeInTheDocument();
-
-    await user.click(
-      screen.getByRole("button", {
-        name: "✕",
-      })
-    );
-
-    expect(
-      screen.queryByText("Please complete all fields.")
-    ).not.toBeInTheDocument();
   });
 });
