@@ -71,3 +71,67 @@ export const createPatient = async (patient) => {
 
     return result.rows[0];
 };
+
+export const updatePatient = async (id, patientInfo) => {
+    const {
+        first_name,
+        last_name,
+        middle_name,
+        birth_date,
+        age,
+        sex,
+        contact_number,
+        email,
+        address,
+        emergency_contact,
+        medical_history,
+        status
+    } = patientInfo;
+
+    const result = await db.query(
+        `
+        UPDATE patients
+        SET
+            first_name = $1,
+            last_name = $2,
+            middle_name = $3,
+            birth_date = $4,
+            age = $5,
+            sex = $6,
+            contact_number = $7,
+            email = $8,
+            address = $9,
+            emergency_contact = $10,
+            medical_history = $11,
+            status = $12
+        WHERE id = $13
+        RETURNING *;
+        `,
+        [
+            first_name,
+            last_name,
+            middle_name,
+            birth_date,
+            age,
+            sex,
+            contact_number,
+            email,
+            address,
+            emergency_contact,
+            medical_history,
+            status,
+            id
+        ]
+    );
+
+    return result.rows[0];
+};
+
+export const deletePatient = async (id) => {
+    const result = await db.query(
+        "DELETE FROM patients WHERE id = $1 RETURNING *",
+        [id]
+    );
+
+    return result.rows[0];
+};

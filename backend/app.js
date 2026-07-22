@@ -6,6 +6,7 @@ import doctorAvailabilityRoutes from "./src/objective1/routes/doctorAvailability
 import orderRoutes from "./src/objective2/routes/order.js";
 import predictionRoutes from "./src/objective2/routes/prediction.js";
 import summaryRoutes from "./src/objective1/routes/summary.routes.js";
+import doctorRoutes from "./src/objective1/routes/doctor.routes.js";
 import depositRoutes from "./src/objective3/routes/depositRoutes.js";
 import paymentRoutes from "./src/objective3/routes/paymentRoutes.js";
 import receiptRoutes from "./src/objective3/routes/receiptRoutes.js";
@@ -14,8 +15,15 @@ import cors from "cors";
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+];
+
 app.use(express.json());
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 
 
 app.get("/", (req, res) => {
@@ -29,6 +37,7 @@ app.use("/api/doc-availability", doctorAvailabilityRoutes);
 app.use("/api/summaries", summaryRoutes);
 app.use("/inventory", inventoryRoutes);
 app.use("/orders", orderRoutes);
+app.use("/api/doctors", doctorRoutes);
 app.use("/api/deposits", depositRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/receipts", receiptRoutes);

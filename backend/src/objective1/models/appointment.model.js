@@ -58,6 +58,8 @@ export const createAppointment = async (appointment) => {
 
 export const updateAppointment = async (id, appointment) => {
 
+    console.log(appointment)
+
     const {
         patient_id,
         appointment_date,

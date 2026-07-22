@@ -5,10 +5,12 @@ import request from "supertest";
 import patientRoutes from "../../../src/objective1/routes/patient.routes.js";
 import * as PatientModel from "../../../src/objective1/models/patient.model.js";
 
-vi.mock("../../../src/objective1/models/patient.model.js", () => ({
+vi.mock("../../../src/objective1/models/patient.model.js", { concurrent: false }, () => ({
   getAllPatients: vi.fn(),
   getPatientById: vi.fn(),
   createPatient: vi.fn(),
+  updatePatient: vi.fn(),
+  deletePatient: vi.fn(),
 }));
 
 describe("patient.routes (unit, with mocks)", () => {
@@ -95,6 +97,32 @@ describe("patient.routes (unit, with mocks)", () => {
     expect(res.body.data).toBeTruthy();
     expect(res.body.data.first_name).toBe("Jane");
     expect(res.body.data.id).toBe(123);
+  });
+
+  it("PUT /:id updates a patient", async () => {
+    const created = { id: 123, ...buildPatient({ first_name: "Jane" }) };
+    const payload = buildPatient({ first_name: "Jane" });
+
+    vi.spyOn(PatientModel, "updatePatient").mockResolvedValue(created);
+
+    const res = await request(app).put(`/api/patients/${created.id}`).send(payload);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toBeTruthy();
+    expect(res.body.data.first_name).toBe("Jane");
+    expect(res.body.data.id).toBe(123);
+  });
+
+  it("DELETE /:id deletes a patient", async () => {
+    const created = { id: 123, ...buildPatient({ first_name: "Jane" }) };
+
+    vi.spyOn(PatientModel, "deletePatient").mockResolvedValue(created);
+
+    const res = await request(app).delete(`/api/patients/${created.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
   });
 });
 

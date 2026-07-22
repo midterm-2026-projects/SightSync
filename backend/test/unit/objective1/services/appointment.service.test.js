@@ -193,7 +193,7 @@ describe("Appointment Service", () => {
                     appointment_date: futureDate,
                     appointment_time: "09:00:00",
                     appointment_type: "Consultation",
-                    status: "Pending"
+                    status: "No Show"
                 })
             ).rejects.toThrow("Invalid appointment status.");
 

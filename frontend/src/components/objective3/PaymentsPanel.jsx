@@ -104,13 +104,13 @@ export default function PaymentsPanel({ prefill, __testOnSuccessRef }) {
               <tbody>
                 {history.map((p) => (
                   <tr key={p.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "10px" }}>{p.receipt_number || "—"}</td>
-                    <td style={{ padding: "10px" }}>{p.patient_name}</td>
-                    <td style={{ padding: "10px" }}>{p.doctor_name}</td>
+                    <td style={{ padding: "10px" }}>{p.receipt_number || p.receiptNumber || "—"}</td>
+                    <td style={{ padding: "10px" }}>{p.patient_name || (p.customer_id ? `Customer #${p.customer_id}` : "—")}</td>
+                    <td style={{ padding: "10px" }}>{p.doctor_name || "—"}</td>
                     <td style={{ padding: "10px" }}>₱{Number(p.receipt_total ?? p.amount).toLocaleString("en-PH", { minimumFractionDigits: 2 })}</td>
                     <td style={{ padding: "10px", textTransform: "capitalize" }}>{p.method}</td>
                     <td style={{ padding: "10px" }}>{p.status}</td>
-                    <td style={{ padding: "10px" }}>{new Date(p.created_at).toLocaleDateString("en-PH")}</td>
+                    <td style={{ padding: "10px" }}>{(p.created_at || p.payment_date || p.paymentDate) ? new Date(p.created_at || p.payment_date || p.paymentDate).toLocaleDateString("en-PH") : "—"}</td>
                   </tr>
                 ))}
               </tbody>

@@ -1,9 +1,15 @@
+
+
 import { useState } from 'react';
-import InventoryForm from '../objective2/InventoryForm';
-import InventoryTable from '../objective2/InventoryTable';
-import PatientDirectoryView from './PatientDirectoryView';
-import PatientRegistrationForm from '../Registration/PatientRegistrationForm';
-import PredictionDashboard from "../objective2/PredictionDashboard";
+import InventoryForm from './objective2/InventoryForm';
+import InventoryTable from './objective2/InventoryTable';
+import PatientDirectoryView from './objective1/Management/PatientDirectoryView';
+import PatientRegistrationForm from './objective1/Registration/PatientRegistrationForm';
+import AppointmentManager from './objective1/Appointments/AppointmentManager';
+import AppObjective3 from './objective3/AppReceipt/AppObjective3.jsx';
+import PaymentsPanel from './objective3/PaymentsPanel.jsx';
+import Dashboard from "./objective1/Dashboard/Dashboard.jsx"
+import PredictionDashboard from "./objective2/PredictionDashboard";
 
 export default function AppLayout({ children }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -38,12 +44,15 @@ export default function AppLayout({ children }) {
         return <PatientDirectoryView />;
       case 'registration':
         return <PatientRegistrationForm />;
+      case 'payments':
+        return (
+          <div style={{ padding: '24px', background: '#f8fafc', minHeight: '80vh' }}>
+            <PaymentsPanel />
+          </div>
+        );
       case 'appointments':
         return (
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Appointment Schedules</h2>
-            <p className="mt-2 text-sm text-gray-500">Appointment workflows will be mounted here in the upcoming sprint.</p>
-          </div>
+          <AppointmentManager />
         );
 
       case "prediction":
@@ -52,13 +61,15 @@ export default function AppLayout({ children }) {
       case 'dashboard':
       default:
         return (
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Dashboard Overview</h2>
-            <p className="mt-2 text-sm text-gray-500">System initialized successfully. Core functional architecture is now mounted through the shared layout.</p>
-          </div>
+          <Dashboard />
         );
     }
   };
+
+  const getButtonClass = (tabName) =>
+    `w-full rounded-lg px-3 py-2 text-left transition-colors ${
+      activeTab === tabName ? 'bg-gray-200 font-medium text-gray-900' : 'hover:bg-gray-100 text-gray-700'
+    }`;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -71,28 +82,8 @@ export default function AppLayout({ children }) {
         <nav>
           <ul className="space-y-2">
             <li>
-              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('dashboard')}>
+              <button className={getButtonClass('dashboard')} onClick={() => setActiveTab('dashboard')}>
                 Dashboard Overview
-              </button>
-            </li>
-            <li>
-              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('inventory')}>
-                Inventory Management
-              </button>
-            </li>
-            <li>
-              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('patients')}>
-                Patient Management (W2)
-              </button>
-            </li>
-            <li>
-              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('registration')}>
-                Patient Registration
-              </button>
-            </li>
-            <li>
-              <button className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100" onClick={() => setActiveTab('appointments')}>
-                Appointment Schedules (W4)
               </button>
             </li>
             <li>
@@ -100,10 +91,36 @@ export default function AppLayout({ children }) {
                 Prediction Dashboard
               </button>
             </li>
+            <li>
+              <button className={getButtonClass('inventory')} onClick={() => setActiveTab('inventory')}>
+                Inventory Management
+              </button>
+            </li>
+            <li>
+              <button className={getButtonClass('patients')} onClick={() => setActiveTab('patients')}>
+                Patient Management
+              </button>
+            </li>
+            <li>
+              <button className={getButtonClass('registration')} onClick={() => setActiveTab('registration')}>
+                Patient Registration
+              </button>
+            </li>
+            <li>
+              <button className={getButtonClass('payments')} onClick={() => setActiveTab('payments')}>
+                Payments & Receipts
+              </button>
+            </li>
+            <li>
+              <button className={getButtonClass('appointments')} onClick={() => setActiveTab('appointments')}>
+                Appointment Schedules
+              </button>
+            </li>
+            
           </ul>
         </nav>
 
-        <div className="mt-8 text-sm text-gray-500">Module Owner: Lalo, J.P.</div>
+        <div className="mt-8 text-sm text-gray-500">SightSync 2026</div>
       </aside>
 
       <div className="md:ml-72">

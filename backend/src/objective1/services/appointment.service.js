@@ -39,7 +39,7 @@ export const converted_time = async (appointment) => {
 
 const VALID_APPOINTMENT_TYPES = ["Consultation", "Follow-up"];
 
-const VALID_STATUSES = ["Scheduled", "Completed", "Cancelled", "No Show"];
+const VALID_STATUSES = ["Scheduled", "Completed", "Cancelled", "Pending"];
 
 // ===========================
 // GET ALL

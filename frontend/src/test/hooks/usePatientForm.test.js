@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import usePatientForm from '../../hooks/usePatientForm';
+import usePatientForm from '../../../src/components/objective1/hooks/usePatientForm';
 
 const expectedInitialFormData = {
   firstName: '',
