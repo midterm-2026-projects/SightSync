@@ -189,10 +189,14 @@ export default function InventoryForm({ inventory = [], setInventory }) {
 
         {/* Product Name */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">
+          <label
+            htmlFor="productName"
+            className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5"
+          >
             Product Name
           </label>
           <input
+            id="productName"
             type="text"
             placeholder="e.g. Classic Aviator"
             value={name}
@@ -203,10 +207,14 @@ export default function InventoryForm({ inventory = [], setInventory }) {
 
         {/* Category / Type */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">
+          <label
+            htmlFor="productType"
+            className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5"
+          >
             Product Type
           </label>
           <select
+            id="productType"
             value={type}
             onChange={(e) => setType(e.target.value)}
             className="w-full px-3.5 py-2 text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-700 cursor-pointer"
@@ -220,7 +228,10 @@ export default function InventoryForm({ inventory = [], setInventory }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Price */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">
+            <label
+              htmlFor="price"
+              className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5"
+            >
               Price ($)
             </label>
             <div className="relative rounded-lg shadow-sm">
@@ -228,6 +239,7 @@ export default function InventoryForm({ inventory = [], setInventory }) {
                 $
               </span>
               <input
+                id="price"
                 type="number"
                 step="0.01"
                 placeholder="0.00"
@@ -240,10 +252,14 @@ export default function InventoryForm({ inventory = [], setInventory }) {
 
           {/* Stock */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">
+            <label
+              htmlFor="stock"
+              className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5"
+            >
               Stock Quantity
             </label>
             <input
+              id="stock"
               type="number"
               placeholder="0"
               value={stock}
