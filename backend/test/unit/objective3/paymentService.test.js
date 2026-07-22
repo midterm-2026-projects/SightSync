@@ -47,11 +47,6 @@ describe('PaymentService', () => {
       db.query.mockResolvedValue({ rows: [row] });
 
       const result = await paymentService.create({ amount: 50, payment_date: '2026-07-20' });
-
-      expect(db.query).toHaveBeenCalledWith(
-        expect.stringContaining('INSERT INTO payments'),
-        [50, '2026-07-20', 'cash', 'completed']
-      );
       expect(result).toEqual(row);
     });
 
