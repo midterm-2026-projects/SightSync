@@ -81,6 +81,11 @@ describe("InventoryForm", () => {
       "Blue Cut Lens"
     );
 
+    await user.selectOptions(
+      screen.getByRole("combobox"),
+      "Lens"
+    );
+
     await user.type(
       screen.getByLabelText("Price ($)"),
       "1500"
