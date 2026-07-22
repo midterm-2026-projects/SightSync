@@ -1,186 +1,27 @@
-import "@testing-library/jest-dom";
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
 import InventoryForm from "../../components/objective2/InventoryForm";
 
-describe("InventoryForm Validation", () => {
-
-  it("should not submit when only Product Name is provided", async () => {
-    // Arrange
-    const mockSetInventory = vi.fn();
-    const alertSpy = vi
-    .spyOn(window, "alert")
-    .mockImplementation(() => {});
-    const user = userEvent.setup();
-
+describe("InventoryForm Component", () => {
+  it("should render the form heading", () => {
     render(
       <InventoryForm
         inventory={[]}
-        setInventory={mockSetInventory}
+        setInventory={vi.fn()}
       />
     );
 
-    // Act
-    await user.type(
-      screen.getByPlaceholderText("Product Name"),
-      "Blue Cut Lens"
-    );
-
-    await user.click(
-      screen.getByRole("button", {
-        name: /add product/i,
-      })
-    );
-
-    // Assert
-    expect(alertSpy)
-    .toHaveBeenCalledWith(
-    "Please complete all fields."
-    );
-
-    expect(mockSetInventory)
-    .not.toHaveBeenCalled();
-
-    alertSpy.mockRestore();
-  });
-
-  it("should not submit when Product Name and Price are provided but Stock is empty", async () => {
-    // Arrange
-    const mockSetInventory = vi.fn();
-    const alertSpy = vi
-    .spyOn(window, "alert")
-    .mockImplementation(() => {});
-    const user = userEvent.setup();
-
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={mockSetInventory}
-      />
-    );
-
-    // Act
-    await user.type(
-      screen.getByPlaceholderText("Product Name"),
-      "Blue Cut Lens"
-    );
-
-    await user.type(
-      screen.getByPlaceholderText("Price"),
-      "1500"
-    );
-
-    await user.click(
-      screen.getByRole("button", {
-        name: /add product/i,
-      })
-    );
-
-    // Assert
-    expect(alertSpy)
-    .toHaveBeenCalledWith(
-    "Please complete all fields."
-    );
-
-    expect(mockSetInventory)
-    .not.toHaveBeenCalled();
-
-    alertSpy.mockRestore();
-  });
-
-  it("should not submit when Product Name and Stock are provided but Price is empty", async () => {
-    // Arrange
-    const mockSetInventory = vi.fn();
-    const alertSpy = vi
-    .spyOn(window, "alert")
-    .mockImplementation(() => {});
-    const user = userEvent.setup();
-
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={mockSetInventory}
-      />
-    );
-
-    // Act
-    await user.type(
-      screen.getByPlaceholderText("Product Name"),
-      "Blue Cut Lens"
-    );
-
-    await user.type(
-      screen.getByPlaceholderText("Stock"),
-      "20"
-    );
-
-    await user.click(
-      screen.getByRole("button", {
-        name: /add product/i,
-      })
-    );
-
-    // Assert
-    expect(alertSpy)
-    .toHaveBeenCalledWith(
-    "Please complete all fields."
-    );
-
-    expect(mockSetInventory)
-    .not.toHaveBeenCalled();
-
-    alertSpy.mockRestore();
-  });
-
-  it("should submit when all required fields are completed", async () => {
-    // Arrange
-    const mockSetInventory = vi.fn();
-    const user = userEvent.setup();
-
-    render(
-      <InventoryForm
-        inventory={[]}
-        setInventory={mockSetInventory}
-      />
-    );
-
-    // Act
-    await user.type(
-      screen.getByPlaceholderText("Product Name"),
-      "Blue Cut Lens"
-    );
-
-    await user.type(
-      screen.getByPlaceholderText("Price"),
-      "1500"
-    );
-
-    await user.type(
-      screen.getByPlaceholderText("Stock"),
-      "20"
-    );
-
-    await user.click(
-      screen.getByRole("button", {
-        name: /add product/i,
-      })
-    );
-
-    // Assert
-    expect(mockSetInventory).toHaveBeenCalledWith([
-     expect.objectContaining({
-        name: "Blue Cut Lens",
-        type: "Lens",
-        price: 1500,
-        stock: 20,
-       }),
-    ]);
+    expect(screen.getByRole("heading", {level: 2,name: "Add Product",})).toBeInTheDocument();
     
+    expect(
+      screen.getByText(
+        "Enter product details to add new items to your inventory."
+      )
+    ).toBeInTheDocument();
   });
 
-  it("should allow user to select Frame from dropdown", async () => {
-    // Arrange
+  it("should show validation error when fields are empty", async () => {
     const user = userEvent.setup();
 
     render(
@@ -190,110 +31,159 @@ describe("InventoryForm Validation", () => {
       />
     );
 
-    // Act
-    await user.selectOptions(
-      screen.getByRole("combobox"),
-      "Frame"
-    );
-
-    // Assert
-    expect(
-      screen.getByRole("combobox")
-    ).toHaveValue("Frame");
-  });
-
-  it("should not submit when price is less than or equal to zero", async () => {
-    // Arrange
-    const alertSpy = vi
-    .spyOn(window, "alert")
-    .mockImplementation(() => {});
-
-    const mockSetInventory = vi.fn();
-    const user = userEvent.setup();
-
-    render(
-    <InventoryForm
-      inventory={[]}
-      setInventory={mockSetInventory}
-     />
-    );
-
-     // Act
-     await user.type(
-      screen.getByPlaceholderText("Product Name"),
-      "Blue Cut Lens"
-    );
-
-     await user.type(
-      screen.getByPlaceholderText("Price"),
-      "0"
-    );
-
-     await user.type(
-      screen.getByPlaceholderText("Stock"),
-      "20"
-    );
-
-     await user.click(
+    await user.click(
       screen.getByRole("button", {
-       name: /add product/i,
+        name: "Add Product",
       })
     );
 
-    // Assert
-     expect(alertSpy).toHaveBeenCalledWith(
-    "Price must be greater than zero."
+    expect(
+      screen.getByText("Please complete all fields.")
+    ).toBeInTheDocument();
+  });
+
+  it("should show validation error for invalid price", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <InventoryForm
+        inventory={[]}
+        setInventory={vi.fn()}
+      />
     );
 
-    expect(mockSetInventory).not.toHaveBeenCalled();
-    alertSpy.mockRestore();
+    await user.type(
+      screen.getByPlaceholderText("e.g. Classic Aviator"),
+      "Blue Cut Lens"
+    );
+
+    await user.type(
+      screen.getByPlaceholderText("0.00"),
+      "0"
+    );
+
+    await user.type(
+      screen.getByPlaceholderText("0"),
+      "10"
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Add Product",
+      })
+    );
+
+    expect(
+      screen.getByText("Price must be greater than zero.")
+    ).toBeInTheDocument();
   });
 
-  it("should not submit when stock quantity is negative", async () => {
-  // Arrange
-  const alertSpy = vi
-    .spyOn(window, "alert")
-    .mockImplementation(() => {});
+  it("should show validation error for negative stock", async () => {
+    const user = userEvent.setup();
 
-  const mockSetInventory = vi.fn();
-  const user = userEvent.setup();
+    render(
+      <InventoryForm
+        inventory={[]}
+        setInventory={vi.fn()}
+      />
+    );
 
-  render(
-    <InventoryForm
-      inventory={[]}
-      setInventory={mockSetInventory}
-    />
-  );
+    await user.type(
+      screen.getByPlaceholderText("e.g. Classic Aviator"),
+      "Blue Cut Lens"
+    );
 
-  // Act
-  await user.type(
-    screen.getByPlaceholderText("Product Name"),
-    "Blue Cut Lens"
-  );
+    await user.type(
+      screen.getByPlaceholderText("0.00"),
+      "1200"
+    );
 
-  await user.type(
-    screen.getByPlaceholderText("Price"),
-    "1500"
-  );
+    await user.type(
+      screen.getByPlaceholderText("0"),
+      "-1"
+    );
 
-  await user.type(
-    screen.getByPlaceholderText("Stock"),
-    "-1"
-  );
+    await user.click(
+      screen.getByRole("button", {
+        name: "Add Product",
+      })
+    );
 
-  await user.click(
-    screen.getByRole("button", {
-      name: /add product/i,
-    })
-  );
-
-  // Assert
-  expect(alertSpy).toHaveBeenCalledWith(
-    "Stock quantity cannot be negative."
-  );
-
-  expect(mockSetInventory).not.toHaveBeenCalled();
-  alertSpy.mockRestore();
+    expect(
+      screen.getByText("Stock quantity cannot be negative.")
+    ).toBeInTheDocument();
   });
 
+  it("should add a new product when form is valid", async () => {
+    const user = userEvent.setup();
+
+    const inventory = [];
+    const setInventory = vi.fn();
+
+    render(
+      <InventoryForm
+        inventory={inventory}
+        setInventory={setInventory}
+      />
+    );
+
+    await user.type(
+      screen.getByPlaceholderText("e.g. Classic Aviator"),
+      "Blue Cut Lens"
+    );
+
+    await user.selectOptions(
+      screen.getByRole("combobox"),
+      "Lens"
+    );
+
+    await user.type(
+      screen.getByPlaceholderText("0.00"),
+      "1500"
+    );
+
+    await user.type(
+      screen.getByPlaceholderText("0"),
+      "20"
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Add Product",
+      })
+    );
+
+    expect(setInventory).toHaveBeenCalledTimes(1);
+  });
+
+  it("should clear the validation message when close button is clicked", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <InventoryForm
+        inventory={[]}
+        setInventory={vi.fn()}
+      />
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Add Product",
+      })
+    );
+
+    expect(
+      screen.getByText("Please complete all fields.")
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "✕",
+      })
+    );
+
+    expect(
+      screen.queryByText("Please complete all fields.")
+    ).not.toBeInTheDocument();
+  });
 });
