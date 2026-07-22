@@ -10,6 +10,7 @@ import doctorRoutes from "./src/objective1/routes/doctor.routes.js";
 import depositRoutes from "./src/objective3/routes/depositRoutes.js";
 import paymentRoutes from "./src/objective3/routes/paymentRoutes.js";
 import receiptRoutes from "./src/objective3/routes/receiptRoutes.js";
+import messagingRoutes from "./src/objective3/routes/messagingRoutes.js";
 
 import cors from "cors";
 
@@ -44,6 +45,7 @@ app.use("/api/doctors", doctorRoutes);
 app.use("/api/deposits", depositRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/receipts", receiptRoutes);
+app.use("/api", messagingRoutes);
 app.use("/prediction", predictionRoutes);
 
 export default app;

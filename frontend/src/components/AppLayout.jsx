@@ -10,6 +10,8 @@ import AppObjective3 from './objective3/AppReceipt/AppObjective3.jsx';
 import PaymentsPanel from './objective3/PaymentsPanel.jsx';
 import Dashboard from "./objective1/Dashboard/Dashboard.jsx"
 import PredictionDashboard from "./objective2/PredictionDashboard";
+import CommunicationLogs, { AccessDeniedBanner } from "./objective3/CommunicationLogs.jsx";
+import OrderMessaging from "./objective3/OrderMessaging.jsx";
 
 export default function AppLayout({ children }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -55,14 +57,27 @@ export default function AppLayout({ children }) {
           <AppointmentManager />
         );
 
+      case 'communication':
+        return <CommunicationLogs />;
+
+      case 'orderMessaging':
+        return (
+          <div style={{ padding: '4px' }}>
+            <OrderMessaging />
+          </div>
+        );
+
       case "prediction":
           return <PredictionDashboard />;
+
         
       case 'dashboard':
       default:
         return (
           <Dashboard />
+
         );
+          
     }
   };
 
@@ -114,6 +129,16 @@ export default function AppLayout({ children }) {
             <li>
               <button className={getButtonClass('appointments')} onClick={() => setActiveTab('appointments')}>
                 Appointment Schedules
+              </button>
+            </li>
+            <li>
+              <button className={getButtonClass('communication')} onClick={() => setActiveTab('communication')}>
+                Communication
+              </button>
+            </li>
+            <li>
+              <button className={getButtonClass('orderMessaging')} onClick={() => setActiveTab('orderMessaging')}>
+                Order Messaging
               </button>
             </li>
             
